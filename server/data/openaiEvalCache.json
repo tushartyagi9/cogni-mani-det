@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "description": "Cache of OpenAI production-model evaluation results against the benchmark dataset.",
+  "lastRunAt": null,
+  "samplesEvaluated": 0,
+  "splitEvaluated": null,
+  "results": [],
+  "metrics": null
+}

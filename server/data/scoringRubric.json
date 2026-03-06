@@ -1,0 +1,156 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-03-07",
+  "description": "MindGuard Manipulation Detection Scoring Rubric. Each category defines a class of psychological manipulation tactic, its weight in the final score, and example phrases for detection.",
+  "categories": [
+    {
+      "id": "urgency_pressure",
+      "category": "Urgency Pressure",
+      "description": "Artificial time pressure used to bypass critical thinking and force impulsive action. Often creates a false sense of scarcity or deadline.",
+      "weight": 14,
+      "risk_level": "high",
+      "example_phrases": [
+        "act now", "act immediately", "limited time", "last chance", "time is running out",
+        "expires today", "don't wait", "before it's too late", "right now", "deadline",
+        "this offer ends", "only hours left", "breaking news", "urgent", "immediately",
+        "hurry", "while supplies last", "don't miss", "ends soon", "final hours"
+      ]
+    },
+    {
+      "id": "fear_amplification",
+      "category": "Fear Amplification",
+      "description": "Exaggeration or fabrication of threats, dangers, or catastrophic outcomes to trigger the fear response and override rational decision-making.",
+      "weight": 13,
+      "risk_level": "high",
+      "example_phrases": [
+        "dangerous", "deadly", "life-threatening", "catastrophic", "crisis", "emergency",
+        "disaster", "terrifying", "alarming", "fatal", "kill", "destroying your",
+        "in danger", "threat to", "life at risk", "serious risk", "severe danger",
+        "toxic", "poisoning", "contaminated", "radiation", "lethal"
+      ]
+    },
+    {
+      "id": "conspiracy_framing",
+      "category": "Conspiracy Framing",
+      "description": "Positioning information as suppressed, hidden, or censored by powerful actors to create an in-group vs. out-group dynamic and dismiss counter-evidence.",
+      "weight": 13,
+      "risk_level": "high",
+      "example_phrases": [
+        "they don't want you to know", "mainstream media won't", "what they're hiding",
+        "suppressed", "cover up", "cover-up", "hidden truth", "secret agenda",
+        "what the government", "deep state", "elite", "globalist", "the establishment",
+        "censored", "banned", "silenced", "before it gets deleted", "before they remove",
+        "wake up", "sheeple", "red pill", "the truth they hide"
+      ]
+    },
+    {
+      "id": "sensationalism",
+      "category": "Sensationalism",
+      "description": "Exaggerated, dramatic language designed to provoke strong emotional reactions and increase engagement, often at the expense of factual accuracy.",
+      "weight": 12,
+      "risk_level": "high",
+      "example_phrases": [
+        "shocking", "unbelievable", "jaw-dropping", "mind-blowing", "explosive",
+        "bombshell", "scandalous", "outrageous", "incredible", "stunning", "explosive revelation",
+        "you won't believe", "jaw dropping", "insane", "absolutely insane",
+        "this is HUGE", "this changes everything", "nobody is talking about"
+      ]
+    },
+    {
+      "id": "emotional_framing",
+      "category": "Emotional Framing",
+      "description": "Use of emotionally charged language to trigger strong feelings (rage, grief, pride, disgust) that cloud objective evaluation of information.",
+      "weight": 11,
+      "risk_level": "high",
+      "example_phrases": [
+        "heartbreaking", "devastating", "infuriating", "horrifying", "disgusting",
+        "outraged", "furious", "enraged", "sickening", "appalling", "shameful",
+        "how dare", "how could they", "cannot believe", "this is wrong",
+        "should be ashamed", "makes me sick", "breaks my heart", "tears in my eyes"
+      ]
+    },
+    {
+      "id": "guilt_manipulation",
+      "category": "Guilt Manipulation",
+      "description": "Use of guilt, shame, or moral obligation to coerce action. Creates a false dichotomy where not acting is equated with moral failure or complicity.",
+      "weight": 11,
+      "risk_level": "high",
+      "example_phrases": [
+        "if you don't", "if you truly cared", "blood is on your hands", "how could you",
+        "you should be ashamed", "real people care", "only selfish people",
+        "you're part of the problem", "if you scroll past", "don't you care",
+        "your silence is", "complicit", "shame on you", "you owe it to",
+        "true believers", "real patriots", "real parents"
+      ]
+    },
+    {
+      "id": "authority_misuse",
+      "category": "Authority Misuse",
+      "description": "Vague or false appeals to authority figures, experts, or institutions without verifiable citations. Often used to lend false credibility to claims.",
+      "weight": 10,
+      "risk_level": "medium",
+      "example_phrases": [
+        "experts say", "scientists claim", "studies show", "research proves",
+        "doctors confirm", "professionals agree", "sources say", "experts warn",
+        "leading researchers", "top scientists", "medical professionals agree",
+        "authorities confirm", "officials reveal", "insiders say", "according to sources"
+      ]
+    },
+    {
+      "id": "bandwagon",
+      "category": "Bandwagon / Social Proof",
+      "description": "Leveraging social conformity pressure by implying that a large majority already believes or acts in a certain way, making non-compliance seem abnormal.",
+      "weight": 10,
+      "risk_level": "medium",
+      "example_phrases": [
+        "everyone knows", "everyone is", "everybody", "join millions",
+        "thousands of people", "all your friends", "most people", "the whole world",
+        "nobody believes", "all experts agree", "everyone agrees",
+        "trending everywhere", "going viral", "the nation is outraged",
+        "people everywhere", "millions have already"
+      ]
+    },
+    {
+      "id": "cta_pressure",
+      "category": "Call-to-Action Pressure",
+      "description": "High-pressure demands for immediate action, sharing, or engagement. Often used to spread content virally before critical evaluation can occur.",
+      "weight": 9,
+      "risk_level": "medium",
+      "example_phrases": [
+        "share before it's deleted", "share everywhere", "spread the word",
+        "this needs to go viral", "retweet", "forward this", "tag everyone you know",
+        "subscribe now or", "donate immediately", "sign this now",
+        "must go viral", "share with everyone", "pass this on",
+        "send to everyone", "do not ignore this"
+      ]
+    },
+    {
+      "id": "absolutist_language",
+      "category": "Absolutist Language",
+      "description": "Use of extreme, unqualified absolute statements that leave no room for nuance, exceptions, or uncertainty. A hallmark of black-and-white thinking.",
+      "weight": 9,
+      "risk_level": "medium",
+      "example_phrases": [
+        "always", "never", "only way", "the only", "impossible", "100%",
+        "absolutely", "without question", "undeniably", "definitively",
+        "every single", "no exceptions", "guaranteed", "proven beyond doubt",
+        "irrefutable", "undeniable proof", "settled fact", "absolute truth",
+        "no doubt", "certainly", "without fail"
+      ]
+    },
+    {
+      "id": "lack_of_evidence",
+      "category": "Lack of Evidence",
+      "description": "Presenting claims as factual while using vague qualifiers that signal the absence of actual evidence. Allows false claims to evade fact-checking.",
+      "weight": 8,
+      "risk_level": "low",
+      "example_phrases": [
+        "allegedly", "some say", "many believe", "it is said", "rumored",
+        "unconfirmed reports", "supposedly", "so-called", "some people think",
+        "we've heard", "word is", "reports suggest", "people are saying",
+        "insiders claim", "anonymous sources", "anonymous tips",
+        "it's being reported", "witnesses say"
+      ]
+    }
+  ]
+}

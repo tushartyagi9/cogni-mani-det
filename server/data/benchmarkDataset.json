@@ -1,0 +1,1096 @@
+{
+  "version": "1.0",
+  "createdAt": "2026-03-07",
+  "description": "MindGuard ground-truth benchmark dataset for evaluation and calibration. 120 manually labeled examples balanced across 4 manipulation classes and 4 content types.",
+  "labelSchema": {
+    "neutral":  { "range": [0,  20], "description": "No meaningful manipulation tactics" },
+    "mild":     { "range": [21, 40], "description": "Minor persuasive elements, some bias" },
+    "moderate": { "range": [41, 60], "description": "Clear manipulation tactics, selective framing" },
+    "strong":   { "range": [61, 100],"description": "Multiple high-risk tactics, extreme language" }
+  },
+  "samples": [
+    {
+      "id": "news_neutral_001",
+      "text": "The Federal Reserve raised interest rates by 0.25 percentage points on Wednesday, citing ongoing concerns about inflation. The decision was in line with analyst expectations.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Objective financial reporting with no emotional loading"
+    },
+    {
+      "id": "news_neutral_002",
+      "text": "Researchers at Stanford University published findings indicating that moderate aerobic exercise improves cognitive function in adults over 60. The study, involving 450 participants over two years, was published in Nature Medicine.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Factual science reporting with proper citation"
+    },
+    {
+      "id": "news_neutral_003",
+      "text": "The city council approved a $4.2 million budget for road infrastructure repairs next fiscal year. Council members voted 6-2 in favour of the proposal following a public consultation period.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Local government reporting, no manipulation"
+    },
+    {
+      "id": "news_neutral_004",
+      "text": "Apple reported quarterly revenue of $89.5 billion, up 2% year-over-year. The company cited strong iPhone sales in emerging markets as a primary growth driver.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Corporate earnings report, factual"
+    },
+    {
+      "id": "news_neutral_005",
+      "text": "The unemployment rate fell to 3.7% in September, according to data released by the Bureau of Labor Statistics. Economists had forecast a rate of 3.8%.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Economic data report, verifiable sources"
+    },
+    {
+      "id": "news_neutral_006",
+      "text": "A new species of deep-sea fish was discovered by a research vessel operating in the South Atlantic. The fish, named Bathysaurus cryptus, was found at depths exceeding 3,000 metres.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Scientific discovery reporting, no manipulation"
+    },
+    {
+      "id": "news_neutral_007",
+      "text": "Annual influenza vaccines have been updated to target the dominant strains projected for this season. Health officials recommend vaccination before the end of October for optimal protection.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Public health information, no fear tactics"
+    },
+    {
+      "id": "news_neutral_008",
+      "text": "The national library announced a digitisation project that will make 500,000 historical documents publicly accessible online by 2027. Funding comes from a federal cultural preservation grant.",
+      "content_type": "news",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Cultural reporting, objective and factual"
+    },
+    {
+      "id": "email_neutral_001",
+      "text": "Your subscription renewal is confirmed. Your next billing date is June 15. To view your billing history or update your payment method, log in to your account.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Routine transactional email, no pressure"
+    },
+    {
+      "id": "email_neutral_002",
+      "text": "Meeting reminder: Q2 performance review is scheduled for Thursday at 10:00 AM in Conference Room B. Please review the attached agenda before attending.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Internal business communication, neutral"
+    },
+    {
+      "id": "email_neutral_003",
+      "text": "Your order #45892 has been confirmed. Estimated delivery is 3–5 business days. You will receive a shipping notification with a tracking number once the order has been dispatched.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Order confirmation, purely informational"
+    },
+    {
+      "id": "email_neutral_004",
+      "text": "We are updating our privacy policy, effective January 1. The update clarifies how we handle user data and introduces new opt-out options. Please review the full document at the link below.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Policy update notification, transparent"
+    },
+    {
+      "id": "email_neutral_005",
+      "text": "Thank you for contacting support. Your ticket #7821 has been created. Our team will respond within two business days. In the meantime, you can track your ticket status in the help centre.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Support acknowledgement, no manipulation"
+    },
+    {
+      "id": "email_neutral_006",
+      "text": "A password reset was requested for your account. Click the link below to set a new password. The link expires in 24 hours. If you did not request a reset, no action is needed.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Security email, informational not alarmist"
+    },
+    {
+      "id": "email_neutral_007",
+      "text": "Your invoice for March is now available. The total amount due is $150.00, payable by April 1. You can download the invoice from your account dashboard.",
+      "content_type": "email",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Billing notification, transactional"
+    },
+    {
+      "id": "social_neutral_001",
+      "text": "Just finished reading Thinking Fast and Slow. Worth reading if you're interested in cognitive bias research. Dense but rewarding.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Casual book recommendation, no manipulation"
+    },
+    {
+      "id": "social_neutral_002",
+      "text": "Ran 8km this morning. Trying to build up to a half-marathon by autumn. Any training plan recommendations welcome.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Personal update, no emotional manipulation"
+    },
+    {
+      "id": "social_neutral_003",
+      "text": "Does anyone have good recommendations for hiking trails near Snowdonia? Looking for something moderate, about 15-20km, with good views.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Information-seeking post, genuinely neutral"
+    },
+    {
+      "id": "social_neutral_004",
+      "text": "Watched a documentary on typography history last night. If you're interested in design or print media, it's worth an hour of your time.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Content recommendation, no pressure"
+    },
+    {
+      "id": "social_neutral_005",
+      "text": "Working from home today. The commute from bed to desk is significantly shorter but the coffee is the same.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Casual humour, no manipulation"
+    },
+    {
+      "id": "social_neutral_006",
+      "text": "New exhibit on Islamic geometric art has opened at the V&A. Particularly liked the section on mathematical patterns in tilework.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Cultural observation, factual"
+    },
+    {
+      "id": "social_neutral_007",
+      "text": "Reminder that the local farmers market is back on Sunday. Good selection of seasonal vegetables this time of year.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Community notice, neutral"
+    },
+    {
+      "id": "social_neutral_008",
+      "text": "Switched to using Obsidian for notes a few months ago. Still getting used to it but the linked notes feature is genuinely useful for long-form research.",
+      "content_type": "social",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Tool recommendation, objective"
+    },
+    {
+      "id": "ad_neutral_001",
+      "text": "Ethiopian Yirgacheffe coffee, medium roast. Notes of citrus and jasmine. Available in 250g and 500g bags. Ships within 3 business days.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Honest product description, no manipulation"
+    },
+    {
+      "id": "ad_neutral_002",
+      "text": "Height-adjustable standing desk. Range: 72–121cm. Available in oak and walnut finish. Standard delivery in 5–7 business days. 2-year manufacturer warranty.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Factual product listing, no pressure"
+    },
+    {
+      "id": "ad_neutral_003",
+      "text": "Certified organic cotton T-shirts. Fabric weight: 180gsm. Available in 12 colours, sizes XS–3XL. Machine washable. Free returns within 30 days.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Transparent product specifications"
+    },
+    {
+      "id": "ad_neutral_004",
+      "text": "Project management software for teams. Free plan available for up to 5 users. Paid plans start at £8 per user per month. Cancel anytime.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "SaaS pricing information, neutral"
+    },
+    {
+      "id": "ad_neutral_005",
+      "text": "Managed web hosting starting at £4 per month. Includes free SSL certificate, automated daily backups, and 99.9% uptime SLA.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Technical hosting advertisement, factual"
+    },
+    {
+      "id": "ad_neutral_006",
+      "text": "Spring seasonal menu available now. Dine-in, takeaway, and online delivery options. Full menu and allergen information on our website.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Restaurant announcement, no pressure"
+    },
+    {
+      "id": "ad_neutral_007",
+      "text": "Architectural photography portfolio available for commercial licensing. High resolution files, editorial and commercial rights available. Contact for rates.",
+      "content_type": "ad",
+      "human_label": "neutral",
+      "expected_score_range": [0, 20],
+      "tactics": [],
+      "notes": "Professional services listing, neutral"
+    },
+
+    {
+      "id": "news_mild_001",
+      "text": "A new study suggests that drinking coffee daily may be linked to a reduced risk of certain liver conditions, though researchers caution that more longitudinal data is needed before firm conclusions can be drawn.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["lack_of_evidence"],
+      "notes": "Uses 'may be linked' and vague expert hedge, minor persuasion"
+    },
+    {
+      "id": "news_mild_002",
+      "text": "Experts believe the housing market could see significant shifts over the coming year as interest rates remain elevated. Some analysts predict prices may correct by 10-15%, while others expect a soft landing.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["authority_misuse", "lack_of_evidence"],
+      "notes": "Vague expert references without citations, mild manipulation"
+    },
+    {
+      "id": "news_mild_003",
+      "text": "Scientists warn that sedentary lifestyles may be silently increasing health risks for millions of office workers. The findings could have major implications for workplace wellness programmes.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["fear_amplification", "sensationalism"],
+      "notes": "Slightly alarmist framing, 'silently increasing risks'"
+    },
+    {
+      "id": "news_mild_004",
+      "text": "The promising new treatment showed positive early results in clinical trials, with researchers saying it could be a breakthrough in managing chronic pain. Larger trials are expected next year.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["sensationalism"],
+      "notes": "Slightly over-optimistic framing for a preliminary result"
+    },
+    {
+      "id": "news_mild_005",
+      "text": "A report suggests that social media platforms may be contributing to increased anxiety in teenagers, with some researchers calling for stronger regulation. The industry has yet to respond publicly.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["lack_of_evidence", "authority_misuse"],
+      "notes": "Vague attribution, mild fear framing"
+    },
+    {
+      "id": "news_mild_006",
+      "text": "The city's ambitious new transport plan could transform commuting for thousands of residents if fully implemented. Critics say the timeline appears optimistic given budget constraints.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["sensationalism"],
+      "notes": "'Transform' is mildly sensational, but balanced with criticism"
+    },
+    {
+      "id": "news_mild_007",
+      "text": "A popular diet trend is gaining traction online, with proponents claiming significant weight loss. Nutrition experts caution that individual results vary and the diet lacks long-term study data.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon", "lack_of_evidence"],
+      "notes": "Some bandwagon language, otherwise fairly balanced"
+    },
+    {
+      "id": "news_mild_008",
+      "text": "A new app claims it can reduce stress in just 10 minutes a day, and early users report positive results. The developer says clinical testing is planned but has not yet been completed.",
+      "content_type": "news",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["lack_of_evidence", "authority_misuse"],
+      "notes": "Unverified claims presented without peer review"
+    },
+    {
+      "id": "email_mild_001",
+      "text": "We noticed you haven't visited in a while. We'd love to have you back — as a thank you, here is a 20% discount on your next order. Use code WELCOME20 at checkout. Offer valid for 7 days.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "Mild time pressure, friendly tone, not manipulative"
+    },
+    {
+      "id": "email_mild_002",
+      "text": "Your free trial ends in 3 days. Upgrade to a paid plan now to keep enjoying premium features without interruption. Plans start at $9.99/month.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "Light urgency with accurate information, acceptable marketing"
+    },
+    {
+      "id": "email_mild_003",
+      "text": "Don't miss our weekend sale — up to 30% off selected products. Sale runs Friday to Sunday only. Shop the full range at our website.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "Normal retail urgency, factual and verifiable"
+    },
+    {
+      "id": "email_mild_004",
+      "text": "We wanted to check in about your account. Many users who upgrade to premium see significantly better results. Would you like to see what's included in your plan options?",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon", "authority_misuse"],
+      "notes": "Vague social proof, mild nudge marketing"
+    },
+    {
+      "id": "email_mild_005",
+      "text": "Your reward points are set to expire on December 31. You currently have 850 points worth $8.50. Redeem them on your next purchase before they expire.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "Light urgency with factual deadline, acceptable"
+    },
+    {
+      "id": "email_mild_006",
+      "text": "We've been working on improvements based on your feedback. Check out the new features we've added to your account — we think you'll love them.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["emotional_framing"],
+      "notes": "Emotional appeal but not manipulative, standard CRM"
+    },
+    {
+      "id": "email_mild_007",
+      "text": "Your profile is 60% complete. Complete your profile to get better recommendations and connect with more users in your field. It takes less than 2 minutes.",
+      "content_type": "email",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon"],
+      "notes": "Mild nudge to action, factual, not high pressure"
+    },
+    {
+      "id": "social_mild_001",
+      "text": "This pasta recipe is honestly life-changing. Made it three nights in a row and my whole family is obsessed. Simple ingredients, incredible result. Link in bio!",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["emotional_framing", "sensationalism"],
+      "notes": "'Life-changing' is hyperbolic but harmless, typical social tone"
+    },
+    {
+      "id": "social_mild_002",
+      "text": "Switched to morning workouts three months ago and I genuinely feel like a different person. If you're struggling with energy, you absolutely should try this. It made all the difference.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["emotional_framing", "absolutist_language"],
+      "notes": "Modest generalisation of personal experience to universal advice"
+    },
+    {
+      "id": "social_mild_003",
+      "text": "Finally tried that productivity method everyone's been talking about and I have to say — it actually works! Can't believe I waited this long to try it.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon", "emotional_framing"],
+      "notes": "Light social proof, casual excitement, mild"
+    },
+    {
+      "id": "social_mild_004",
+      "text": "This book completely changed how I think about money. If you haven't read it, you're genuinely missing out. One of the best things I've done for myself this year.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["emotional_framing", "sensationalism"],
+      "notes": "Enthusiastic but non-malicious, standard recommendation"
+    },
+    {
+      "id": "social_mild_005",
+      "text": "New season of this show just dropped and wow. Not going to spoil anything but it's genuinely some of the best TV I've seen in years. Clear your weekend.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure", "emotional_framing"],
+      "notes": "Mild urgency, excitement-driven, low manipulation"
+    },
+    {
+      "id": "social_mild_006",
+      "text": "I've tried a lot of project management tools over the years and honestly this one is different. The quality is just on another level. Will never go back.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["absolutist_language", "emotional_framing"],
+      "notes": "'Never go back' is absolutist but common hyperbole"
+    },
+    {
+      "id": "social_mild_007",
+      "text": "Grateful for my team today. Surrounded yourself with people who push you to grow and everything changes. So much gratitude. 🙏",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["emotional_framing"],
+      "notes": "Emotional content but sincere, low manipulation"
+    },
+    {
+      "id": "social_mild_008",
+      "text": "Published a new article on how small habits compound over time. Would love your thoughts if you have a few minutes to read it. Link in comments.",
+      "content_type": "social",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": [],
+      "notes": "Self-promotion but honest, minimal manipulation"
+    },
+    {
+      "id": "ad_mild_001",
+      "text": "Join over 50,000 satisfied customers who have made the switch. Start your 30-day free trial today — no credit card required.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon"],
+      "notes": "Social proof numbers, verifiable, low-pressure"
+    },
+    {
+      "id": "ad_mild_002",
+      "text": "Best-rated in its category for three consecutive years. See why our customers keep coming back — rated 4.8 stars from 12,000 reviews.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["authority_misuse", "bandwagon"],
+      "notes": "Award claim without specified source, common in marketing"
+    },
+    {
+      "id": "ad_mild_003",
+      "text": "Availability is limited. Order now to secure your delivery slot before we sell out again. Expected lead time: 2 weeks.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "Scarcity tactic, could be genuine, mild pressure"
+    },
+    {
+      "id": "ad_mild_004",
+      "text": "Thousands of home cooks love our knife set. Rated a best buy by leading food magazines. Get yours delivered free this weekend.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["bandwagon", "authority_misuse"],
+      "notes": "Vague magazine reference, social proof, mild"
+    },
+    {
+      "id": "ad_mild_005",
+      "text": "Sale extended by popular demand! Extra 25% off this weekend only. Price increases return to normal on Monday morning.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure", "bandwagon"],
+      "notes": "'Popular demand' is unverifiable social proof, mild"
+    },
+    {
+      "id": "ad_mild_006",
+      "text": "Upgrade to premium today and immediately unlock advanced analytics, priority support, and unlimited storage. Plans from £15/month.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure"],
+      "notes": "'Immediately' implies urgency, but otherwise factual"
+    },
+    {
+      "id": "ad_mild_007",
+      "text": "New season arrivals are in. Shop now and be among the first to wear this season's standout pieces. Early access for subscribers this week.",
+      "content_type": "ad",
+      "human_label": "mild",
+      "expected_score_range": [21, 40],
+      "tactics": ["urgency_pressure", "bandwagon"],
+      "notes": "FOMO and exclusivity, typical fashion marketing"
+    },
+
+    {
+      "id": "news_moderate_001",
+      "text": "SHOCKING new study reveals hidden dangers lurking in everyday household products that could be silently affecting your health right now. Experts are alarmed by the findings and say action is urgently needed.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["sensationalism", "fear_amplification", "urgency_pressure", "emotional_framing"],
+      "notes": "Multiple alarmist tactics, vague expert reference, clickbait"
+    },
+    {
+      "id": "news_moderate_002",
+      "text": "The government's secret plan to raise taxes on middle-class families has been exposed by a whistleblower. What they're not telling you could cost you thousands. Find out what officials are hiding.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "fear_amplification", "sensationalism"],
+      "notes": "Conspiracy framing, fear of financial harm, unverified claims"
+    },
+    {
+      "id": "news_moderate_003",
+      "text": "Scientists are sounding the alarm as shocking data reveals the health crisis is far worse than officials have admitted. The truth they don't want you to know is finally coming out.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "conspiracy_framing", "sensationalism", "authority_misuse"],
+      "notes": "Suppression narrative combined with fear framing"
+    },
+    {
+      "id": "news_moderate_004",
+      "text": "The food industry's dirty secrets exposed: what they don't want you to know about what goes into everyday processed foods. This investigation reveals practices that should horrify every parent.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "emotional_framing", "sensationalism"],
+      "notes": "Industry conspiracy framing targeting parental emotion"
+    },
+    {
+      "id": "news_moderate_005",
+      "text": "Are your neighbourhoods safe? Rising crime surges are hitting major cities in what analysts are calling an unprecedented crisis. What the mainstream media won't report about your city.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "conspiracy_framing", "sensationalism"],
+      "notes": "Fear of crime amplified, media suppression claim"
+    },
+    {
+      "id": "news_moderate_006",
+      "text": "BREAKING: New research completely overturns everything scientists thought they knew about this common medication. Millions may have been misled for decades. Experts are demanding answers.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["sensationalism", "urgency_pressure", "fear_amplification"],
+      "notes": "Sensational framing of medical research, fear of harm"
+    },
+    {
+      "id": "news_moderate_007",
+      "text": "Scientists warn this everyday habit could be silently destroying your cognitive function over time. Are you unknowingly making this mistake? What you need to know right now.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "urgency_pressure", "sensationalism"],
+      "notes": "Personalised fear framing, urgency without evidence"
+    },
+    {
+      "id": "news_moderate_008",
+      "text": "The hidden costs of this popular diet nobody is talking about. Parents especially need to read this before letting children try it. Experts are alarmed by what research is showing.",
+      "content_type": "news",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "fear_amplification", "emotional_framing", "authority_misuse"],
+      "notes": "Emotional targeting of parents, vague expert warning"
+    },
+    {
+      "id": "email_moderate_001",
+      "text": "URGENT: Your account has been flagged for unusual activity. You must verify your information within 24 hours or your account will be permanently suspended. Click here to verify now.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["urgency_pressure", "fear_amplification"],
+      "notes": "High urgency, threat of account loss, possible phishing pattern"
+    },
+    {
+      "id": "email_moderate_002",
+      "text": "Final warning: Your subscription expires TONIGHT. Do not lose access to everything you have built. Renew immediately before midnight to avoid any disruption to your account.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["urgency_pressure", "emotional_framing", "fear_amplification"],
+      "notes": "Multiple urgency triggers and loss-framing"
+    },
+    {
+      "id": "email_moderate_003",
+      "text": "Thousands of users have already upgraded and are seeing dramatically better results. Don't be the only one left behind when we discontinue the legacy plan next month.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["bandwagon", "guilt_manipulation", "urgency_pressure"],
+      "notes": "Social exclusion framing, unverified stats, FOMO"
+    },
+    {
+      "id": "email_moderate_004",
+      "text": "You have been exclusively selected for this limited offer. But you must act within the next 2 hours — after that, this deal disappears permanently and will never be offered again.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["urgency_pressure", "absolutist_language"],
+      "notes": "False exclusivity plus extreme urgency"
+    },
+    {
+      "id": "email_moderate_005",
+      "text": "LAST CHANCE: The price increases permanently tomorrow. Every single person who has waited regretted it. Lock in the current rate right now before you lose the opportunity forever.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["urgency_pressure", "bandwagon", "absolutist_language"],
+      "notes": "Extreme urgency, social proof of regret, absolutism"
+    },
+    {
+      "id": "email_moderate_006",
+      "text": "WARNING: Your health insurance may be costing you TWICE what you should be paying. Don't let insurance companies take advantage of your loyalty. Find out how much you could save today.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "emotional_framing", "urgency_pressure"],
+      "notes": "Fear of financial exploitation, all caps emphasis"
+    },
+    {
+      "id": "email_moderate_007",
+      "text": "97% of people who see this offer take it. Are you going to be one of the 3% who miss out? Your competitors are already on board. The opportunity window is closing fast.",
+      "content_type": "email",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["bandwagon", "guilt_manipulation", "urgency_pressure"],
+      "notes": "False social proof statistics, competitive guilt"
+    },
+    {
+      "id": "social_moderate_001",
+      "text": "SHARE THIS BEFORE IT GETS DELETED! The media won't cover this. What they don't want you to see. This is important. Tag everyone you know! 👇",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "cta_pressure", "urgency_pressure"],
+      "notes": "Deletion/censorship narrative with viral spreading pressure"
+    },
+    {
+      "id": "social_moderate_002",
+      "text": "I can't believe nobody is talking about this! This affects absolutely everyone and people are just scrolling past. Please share widely before it's too late. 🚨",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["sensationalism", "urgency_pressure", "cta_pressure", "bandwagon"],
+      "notes": "Multiple CTA and urgency tactics combined"
+    },
+    {
+      "id": "social_moderate_003",
+      "text": "If you're not outraged right now, you're not paying attention. This is absolutely insane and everyone needs to wake up and see what is happening.",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["emotional_framing", "guilt_manipulation", "bandwagon"],
+      "notes": "Outrage framing, guilt for not being angry"
+    },
+    {
+      "id": "social_moderate_004",
+      "text": "They're lying to you. I've done my research. Here's what the mainstream media is hiding about this topic. Everything you've been told is wrong. Thread below. 🧵",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "authority_misuse", "sensationalism"],
+      "notes": "Classic conspiracy structure, personal authority claim"
+    },
+    {
+      "id": "social_moderate_005",
+      "text": "WARNING: If you are still using this product STOP immediately! I had a severe reaction and want to make sure nobody else goes through what I did. Please share to protect others.",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "urgency_pressure", "cta_pressure"],
+      "notes": "Single anecdote presented as universal danger warning"
+    },
+    {
+      "id": "social_moderate_006",
+      "text": "How dare they do this to us! This is absolutely disgusting and unacceptable. Share if you are as angry as I am! We cannot let this stand! 😡🔥",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["emotional_framing", "guilt_manipulation", "cta_pressure"],
+      "notes": "Collective outrage framing with sharing pressure"
+    },
+    {
+      "id": "social_moderate_007",
+      "text": "IMPORTANT: The latest app update secretly changed your privacy settings. Every user needs to reverse this right now before your data is shared without your knowledge.",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "urgency_pressure", "conspiracy_framing"],
+      "notes": "Privacy fear with urgency, may or may not be accurate"
+    },
+    {
+      "id": "social_moderate_008",
+      "text": "I am absolutely shocked that this is legal. Once you see what is happening, you cannot unsee it. Please tag your friends to warn them about this. It affects everyone.",
+      "content_type": "social",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["sensationalism", "emotional_framing", "cta_pressure"],
+      "notes": "Shock framing with viral sharing push"
+    },
+    {
+      "id": "ad_moderate_001",
+      "text": "DOCTORS ARE BAFFLED by this one simple trick that ELIMINATES stubborn belly fat overnight! Thousands have already tried it with amazing results. Only limited stock available at this price.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["authority_misuse", "sensationalism", "urgency_pressure", "bandwagon"],
+      "notes": "Classic pseudoscientific ad with urgency and social proof"
+    },
+    {
+      "id": "ad_moderate_002",
+      "text": "WARNING: Are you still using toxic chemicals on your skin? Our all-natural formula is what Big Pharma doesn't want you to discover. See why thousands are making the switch.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "fear_amplification", "bandwagon"],
+      "notes": "Big Pharma conspiracy combined with fear of toxic chemicals"
+    },
+    {
+      "id": "ad_moderate_003",
+      "text": "URGENT: Only 47 units remain at this price. After these are gone, the price increases by 300%. This is your only chance to secure this deal. Act immediately.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["urgency_pressure", "absolutist_language", "fear_amplification"],
+      "notes": "Artificial scarcity with extreme urgency pressure"
+    },
+    {
+      "id": "ad_moderate_004",
+      "text": "This revolutionary supplement is changing lives. Medical establishments don't want this going out. Claim your discount before the offer is removed. Results guaranteed.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "urgency_pressure", "sensationalism", "absolutist_language"],
+      "notes": "Medical suppression narrative with false guarantee"
+    },
+    {
+      "id": "ad_moderate_005",
+      "text": "DANGER: Your current mattress could be silently ruining your health and your sleep quality every night. Here is the uncomfortable truth most people never learn until it's too late.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["fear_amplification", "urgency_pressure", "conspiracy_framing"],
+      "notes": "Product sold via health fear and hidden truth framing"
+    },
+    {
+      "id": "ad_moderate_006",
+      "text": "Join the movement of 2 million people who have escaped the financial system and taken complete control of their money. Are you still a slave to the banks?",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["bandwagon", "conspiracy_framing", "emotional_framing"],
+      "notes": "Anti-establishment framing with social movement pressure"
+    },
+    {
+      "id": "ad_moderate_007",
+      "text": "The natural supplement that Big Pharma tried to suppress is finally available to the public. Clinical results show remarkable benefits. Limited-time introductory price available now.",
+      "content_type": "ad",
+      "human_label": "moderate",
+      "expected_score_range": [41, 60],
+      "tactics": ["conspiracy_framing", "authority_misuse", "urgency_pressure"],
+      "notes": "Suppression narrative with unverifiable clinical claim"
+    },
+
+    {
+      "id": "news_strong_001",
+      "text": "BREAKING EXCLUSIVE: Deep state operatives have been CONFIRMED to be poisoning water supplies in 12 states! The government is HIDING the truth and mainstream media is complicit! Share this BEFORE IT GETS TAKEN DOWN! Patriots need to know NOW!!!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "fear_amplification", "urgency_pressure", "sensationalism", "cta_pressure"],
+      "notes": "Maximum conspiracy, ALL CAPS, multiple exclamations, deletion fear"
+    },
+    {
+      "id": "news_strong_002",
+      "text": "EMERGENCY WARNING!!! The globalists are EXECUTING their final plan as you read this. WAKE UP! This is NOT a drill! Your SURVIVAL literally depends on sharing this information IMMEDIATELY! Do not ignore this!!!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "conspiracy_framing", "cta_pressure", "sensationalism"],
+      "notes": "Survival stakes, globalist conspiracy, maximum urgency"
+    },
+    {
+      "id": "news_strong_003",
+      "text": "EXPOSED: The vaccine contains trackers and is CONFIRMED to be causing mass casualties! The mainstream media is being PAID OFF to suppress this story! Your life is in DANGER! Forward to everyone you love before it is CENSORED!!!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "fear_amplification", "urgency_pressure", "cta_pressure"],
+      "notes": "Health conspiracy with censorship narrative and personal threat"
+    },
+    {
+      "id": "news_strong_004",
+      "text": "They WANT YOU DEAD. The elites have a PLAN and ordinary citizens are not part of it. EVERY SINGLE PERSON in this country MUST know this RIGHT NOW before it is too late to do anything about it.",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "fear_amplification", "urgency_pressure", "sensationalism"],
+      "notes": "Direct threat framing, elite conspiracy, extreme urgency"
+    },
+    {
+      "id": "news_strong_005",
+      "text": "TRAITORS in the government are DESTROYING our way of life! Every true patriot must FIGHT BACK NOW before it is too late! Share this and help SAVE our country! 🇺🇸 RT EVERYONE YOU KNOW!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "emotional_framing", "urgency_pressure", "cta_pressure", "guilt_manipulation"],
+      "notes": "Nationalist framing with loyalty pressure and viral call-to-action"
+    },
+    {
+      "id": "news_strong_006",
+      "text": "BOMBSHELL: The cancer industry is HIDING the CURE to protect billions in profits! Corrupt doctors refuse to tell you about this SECRET treatment! Big Pharma is absolutely terrified of this getting out!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "authority_misuse", "sensationalism", "fear_amplification"],
+      "notes": "Medical industry conspiracy with hidden cure narrative"
+    },
+    {
+      "id": "news_strong_007",
+      "text": "100% PROOF that 5G towers are MAKING PEOPLE SICK and driving the mental illness epidemic! The government KNOWS and is COMPLICIT! You must REFUSE these towers NOW before it is absolutely too late!!!",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["absolutist_language", "conspiracy_framing", "fear_amplification", "urgency_pressure"],
+      "notes": "Technology conspiracy with false certainty claim and urgency"
+    },
+    {
+      "id": "news_strong_008",
+      "text": "URGENT FINAL WARNING: They are coming for your freedoms and your children. Stand up NOW or LOSE EVERYTHING FOREVER. This is the last possible chance to save this nation from total destruction.",
+      "content_type": "news",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "conspiracy_framing", "absolutist_language"],
+      "notes": "Existential threat framing, children safety appeal, ultimatum"
+    },
+    {
+      "id": "email_strong_001",
+      "text": "URGENT SECURITY ALERT: Your account has been COMPROMISED. Hackers are DRAINING your bank account RIGHT NOW. You must verify your identity IMMEDIATELY or LOSE EVERYTHING! Click here BEFORE it's too late!!!",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "sensationalism"],
+      "notes": "Classic phishing pattern with financial terror and extreme urgency"
+    },
+    {
+      "id": "email_strong_002",
+      "text": "FINAL FINAL WARNING!!! We tried to contact you 7 times! Your account will be PERMANENTLY AND IRREVERSIBLY DELETED in exactly 2 HOURS unless you act RIGHT NOW! Do not let months of work disappear FOREVER!",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "absolutist_language", "emotional_framing"],
+      "notes": "Extreme urgency with false contact history claim"
+    },
+    {
+      "id": "email_strong_003",
+      "text": "INHERITANCE NOTICE: You have been exclusively selected to receive $4.7 million USD. You MUST act TODAY or the funds will be permanently and irreversibly lost to you forever. This is your ONE AND ONLY chance.",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "absolutist_language", "sensationalism"],
+      "notes": "Classic advance-fee fraud pattern"
+    },
+    {
+      "id": "email_strong_004",
+      "text": "ARREST WARRANT NOTICE: Your IP address has been flagged for illegal online activity. You have 24 hours to pay the $1,200 compliance fee or face immediate arrest. This is your FINAL AND ONLY NOTICE.",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "urgency_pressure", "absolutist_language"],
+      "notes": "Law enforcement impersonation scam, extreme fear tactic"
+    },
+    {
+      "id": "email_strong_005",
+      "text": "FINANCIAL COLLAPSE ALERT: Your credit score has CATASTROPHICALLY CRASHED overnight. Thousands are going bankrupt this week alone. Only our emergency service can SAVE your entire financial future. Act IMMEDIATELY!",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "urgency_pressure", "bandwagon", "sensationalism"],
+      "notes": "Financial crisis scam with social proof of disaster"
+    },
+    {
+      "id": "email_strong_006",
+      "text": "YOUR COMPUTER IS INFECTED WITH 19 CRITICAL VIRUSES!!! Your personal data and banking information is being STOLEN RIGHT NOW as you read this! Call our emergency line IMMEDIATELY before you lose absolutely everything!!!",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "urgency_pressure", "sensationalism", "absolutist_language"],
+      "notes": "Tech support scam with extreme terror and false specificity"
+    },
+    {
+      "id": "email_strong_007",
+      "text": "A divine blessing is waiting for you RIGHT NOW but ONLY if you forward this to 10 people within the next HOUR. Others who ignored this message suffered terrible and irreversible consequences. Do not let this happen to YOU!",
+      "content_type": "email",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "guilt_manipulation", "cta_pressure"],
+      "notes": "Chain letter format with threat of harm for non-compliance"
+    },
+    {
+      "id": "social_strong_001",
+      "text": "THEY ARE TRYING TO SILENCE US RIGHT NOW!! RT THIS BEFORE IT GETS DELETED!!! The elites KNOW we are waking up and they are absolutely TERRIFIED! Share EVERYWHERE IMMEDIATELY before the censors take this down!!! 🚨🚨🚨",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "cta_pressure", "urgency_pressure", "fear_amplification"],
+      "notes": "Maximum deletion fear, elite suppression, ALL CAPS urgency"
+    },
+    {
+      "id": "social_strong_002",
+      "text": "I am absolutely DEVASTATED and FURIOUS right now! These MONSTERS are hurting innocent people and NOBODY CARES! If you don't share this you are PART OF THE PROBLEM! Blood is on your hands if you scroll past! 😭😡",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["emotional_framing", "guilt_manipulation", "cta_pressure", "sensationalism"],
+      "notes": "Extreme guilt-trip, blood on hands framing, all-caps emotion"
+    },
+    {
+      "id": "social_strong_003",
+      "text": "WAKE UP!!! They have been POISONING our food, water, and air for decades! The proof is ABSOLUTELY EVERYWHERE if you just open your eyes! Share this to red pill your entire network and SAVE LIVES! 🐑➡️🦁",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "fear_amplification", "cta_pressure", "sensationalism"],
+      "notes": "Systemic poisoning conspiracy with awakening movement framing"
+    },
+    {
+      "id": "social_strong_004",
+      "text": "This doctor was FIRED for telling the truth about this disease. What Big Pharma is actively HIDING will absolutely shock you. SHARE before they silence him permanently and forever! Your LIFE literally depends on this.",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "fear_amplification", "urgency_pressure", "cta_pressure"],
+      "notes": "Martyr doctor narrative, pharmaceutical suppression, life threat"
+    },
+    {
+      "id": "social_strong_005",
+      "text": "HOW DARE YOU scroll past without sharing! Children are DYING because people like you don't care enough to spend 5 seconds sharing! You should be absolutely ASHAMED of yourself if you don't repost this right now!!!",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["guilt_manipulation", "emotional_framing", "cta_pressure", "fear_amplification"],
+      "notes": "Direct shame attack on reader for not sharing"
+    },
+    {
+      "id": "social_strong_006",
+      "text": "FINAL WARNING to all patriots! THEY ARE COMING and it is happening FASTER than anyone predicted! Stock up NOW, protect your families! This is NO LONGER a conspiracy — this is confirmed REALITY! Share before you regret it FOREVER!",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "fear_amplification", "conspiracy_framing", "cta_pressure"],
+      "notes": "Survivalist fear with confirmation that conspiracy is real"
+    },
+    {
+      "id": "social_strong_007",
+      "text": "I CANNOT BELIEVE THIS IS HAPPENING IN OUR COUNTRY!!! If you truly love this nation, SHARE THIS RIGHT NOW or you are complicit in its total destruction! Every second you wait is another nail in the coffin of FREEDOM!!!",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["emotional_framing", "guilt_manipulation", "urgency_pressure", "cta_pressure"],
+      "notes": "Patriotic loyalty test framing with complicity guilt"
+    },
+    {
+      "id": "social_strong_008",
+      "text": "She was MURDERED for knowing too much. The DEEP STATE silenced her before she could reveal EVERYTHING. Her final message is below. Share NOW before it is scrubbed from the internet and her death was completely in VAIN! 💔",
+      "content_type": "social",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "emotional_framing", "urgency_pressure", "cta_pressure"],
+      "notes": "Deep state murder narrative with martyrdom and urgent spreading"
+    },
+    {
+      "id": "ad_strong_001",
+      "text": "WARNING: Every day you fail to use OUR product you are actively DESTROYING your own health! Doctors are absolutely TERRIFIED of what we have discovered! BIG PHARMA is desperately trying to BAN this! Order NOW before they shut us down completely!!!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "urgency_pressure", "conspiracy_framing", "guilt_manipulation"],
+      "notes": "Health terror ad with Big Pharma suppression narrative"
+    },
+    {
+      "id": "ad_strong_002",
+      "text": "ABSOLUTE FINAL HOURS: This deal DISAPPEARS FOREVER at midnight TONIGHT! People who missed our last sale BEGGED us to bring it back. DO NOT BE THAT PERSON. Your ONLY chance is RIGHT NOW. After midnight you LOSE IT FOREVER AND EVER!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["urgency_pressure", "absolutist_language", "emotional_framing", "bandwagon"],
+      "notes": "Extreme deadline pressure with social proof of regret"
+    },
+    {
+      "id": "ad_strong_003",
+      "text": "The ANCIENT SECRET that completely BANISHES chronic pain in 24 hours! Thousands of documented success stories that Big Medicine tried desperately to SUPPRESS! They HATE that this actually works! Claim yours NOW before the FDA BANS it forever!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "sensationalism", "urgency_pressure", "bandwagon"],
+      "notes": "Ancient secret + FDA ban threat + Big Medicine suppression"
+    },
+    {
+      "id": "ad_strong_004",
+      "text": "EXPOSED: Why every single financial advisor is LYING to your face about real wealth creation. The entire SYSTEM is rigged AGAINST ordinary people! The 1% does NOT want you to know this SECRET. Break FREE now — only 17 copies left!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "urgency_pressure", "sensationalism", "fear_amplification"],
+      "notes": "Financial elite conspiracy with artificial scarcity"
+    },
+    {
+      "id": "ad_strong_005",
+      "text": "URGENT: This chemical compound is SCIENTIFICALLY CONFIRMED to be in most tap water and is ACTIVELY DESTROYING your children's brain development RIGHT NOW! Our filter REMOVES it completely! Your children are in REAL DANGER every time they drink unfiltered water!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "urgency_pressure", "authority_misuse", "emotional_framing"],
+      "notes": "Children's health terror ad with false scientific authority"
+    },
+    {
+      "id": "ad_strong_006",
+      "text": "The miracle cure THEY absolutely do not want you to discover! 200,000 people are already FREE from the medication trap that makes Big Pharma BILLIONS every year! This is your ONLY chance to break free. Strictly limited — ORDER NOW before it is gone forever!",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["conspiracy_framing", "bandwagon", "absolutist_language", "urgency_pressure"],
+      "notes": "Pharmaceutical suppression with large social proof number"
+    },
+    {
+      "id": "ad_strong_007",
+      "text": "LAST WARNING: Society is ACTIVELY COLLAPSING right now. Food shortages, banking collapse, and civil unrest are coming FASTER than you can possibly imagine. The global elite KNOW this and they are already prepared. Are YOU? Our survival kit is your ONLY insurance.",
+      "content_type": "ad",
+      "human_label": "strong",
+      "expected_score_range": [61, 100],
+      "tactics": ["fear_amplification", "conspiracy_framing", "urgency_pressure", "absolutist_language"],
+      "notes": "Societal collapse survivalist ad with elite conspiracy"
+    }
+  ]
+}

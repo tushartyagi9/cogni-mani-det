@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-03-07",
+  "description": "Calibration thresholds for interpreting raw manipulation scores. Derived from benchmark evaluation.",
+  "thresholds": {
+    "neutral":  { "min": 0,  "max": 20, "label": "Neutral",                "description": "Minimal or no manipulation detected. Content is factual and objective." },
+    "mild":     { "min": 21, "max": 40, "label": "Mild Manipulation",       "description": "Some persuasive language present, but not strongly manipulative." },
+    "moderate": { "min": 41, "max": 60, "label": "Noticeable Manipulation", "description": "Clear manipulation tactics detected. Reader should evaluate critically." },
+    "strong":   { "min": 61, "max": 80, "label": "Strong Manipulation",     "description": "Multiple strong manipulation tactics. High risk of misleading the reader." },
+    "extreme":  { "min": 81, "max": 100,"label": "Extreme Manipulation",    "description": "Extreme manipulation with multiple concurrent high-risk tactics. Avoid or fact-check rigorously." }
+  },
+  "riskLevelMapping": {
+    "neutral":  "low",
+    "mild":     "low",
+    "moderate": "medium",
+    "strong":   "high",
+    "extreme":  "high"
+  },
+  "evidenceWeights": {
+    "capsBonus": {
+      "perWord": 6,
+      "max": 25,
+      "description": "Bonus score per all-caps word (shouting effect)"
+    },
+    "exclamationBonus": {
+      "perMark": 4,
+      "max": 15,
+      "description": "Bonus score per exclamation mark (emotional intensity)"
+    },
+    "densityNormalization": {
+      "factor": 60,
+      "description": "Weight per-word to normalize long vs short texts"
+    }
+  },
+  "minimumTextLength": 20,
+  "minimumEvidenceThreshold": 0,
+  "benchmarkStats": {
+    "lastEvaluated": null,
+    "datasetSize": 0,
+    "accuracy": null,
+    "f1Score": null,
+    "note": "Run GET /api/evaluation?recalculate=true to populate these fields"
+  }
+}
