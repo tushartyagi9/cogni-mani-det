@@ -63,24 +63,90 @@ export function ResultsPage() {
     manipulationScore, trustScore, confidence, biasLevel,
     emotionalIntensity, urgencyScore, riskLevel, tactics,
     radarData, barData, suspiciousPhrases, highlightedWords,
-    neutralRewrite, inputText, source, mode,
+    neutralRewrite, inputText, source, mode, emailClassification,
   } = currentResult;
 
+  type DisplayRiskLevel = 'low' | 'medium' | 'high' | 'critical';
+  const isEmailMode = mode === 'email';
+  const emailDisplayRisk: DisplayRiskLevel =
+    manipulationScore >= 76 ? 'critical' : manipulationScore >= 45 ? 'high' : manipulationScore >= 26 ? 'medium' : 'low';
+  const displayRiskLevel: DisplayRiskLevel = isEmailMode
+    ? emailDisplayRisk
+    : (riskLevel as DisplayRiskLevel);
+
   const riskColor =
-    riskLevel === 'high' ? 'destructive' : riskLevel === 'medium' ? 'warning' : 'primary';
+    displayRiskLevel === 'critical'
+      ? 'destructive'
+      : displayRiskLevel === 'high'
+        ? (isEmailMode ? 'warning' : 'destructive')
+        : displayRiskLevel === 'medium'
+          ? 'warning'
+          : 'primary';
 
   const donutData = [
-    { value: manipulationScore, color: riskLevel === 'high' ? '#FF3B5C' : riskLevel === 'medium' ? '#FFB347' : '#00E5CC' },
+    {
+      value: manipulationScore,
+      color:
+        displayRiskLevel === 'critical'
+          ? '#FF3B5C'
+          : displayRiskLevel === 'high'
+            ? (isEmailMode ? '#FFB347' : '#FF3B5C')
+            : displayRiskLevel === 'medium'
+              ? (isEmailMode ? '#FACC15' : '#FFB347')
+              : '#00E5CC',
+    },
     { value: 100 - manipulationScore, color: '#1A2640' },
   ];
 
-  const riskLabel = riskLevel === 'high' ? 'High Risk' : riskLevel === 'medium' ? 'Medium Risk' : 'Low Risk';
+  const riskLabel =
+    displayRiskLevel === 'critical'
+      ? 'Critical Risk'
+      : displayRiskLevel === 'high'
+        ? 'High Risk'
+        : displayRiskLevel === 'medium'
+          ? 'Medium Risk'
+          : 'Low Risk';
+  const emailMediumRiskTextStyle = isEmailMode && displayRiskLevel === 'medium'
+    ? { color: '#FACC15' }
+    : undefined;
+
+  const emailBadge = isEmailMode && emailClassification
+    ? ({
+        ham: {
+          label: 'Legitimate Email',
+          className: 'bg-primary/20 text-primary border-primary/40',
+        },
+        newsletter: {
+          label: 'Newsletter',
+          className: 'bg-chart-5/20 text-chart-5 border-chart-5/40',
+        },
+        spam: {
+          label: 'Spam',
+          className: 'bg-warning/20 text-warning border-warning/40',
+        },
+        phishing: {
+          label: 'Phishing',
+          className: 'bg-destructive/20 text-destructive border-destructive/40',
+        },
+      } as const)[emailClassification]
+    : null;
 
   // -----------------------------------------------------------------------
   // Recommended action based on score
   // -----------------------------------------------------------------------
   const recommendation = (() => {
-    if (riskLevel === 'high') return {
+    if (displayRiskLevel === 'critical') return {
+      action: 'Critical Alert — Do Not Engage',
+      icon: AlertTriangle,
+      color: 'destructive',
+      details: [
+        'Do not click links or download attachments',
+        'Do not share passwords, OTPs, or payment details',
+        'Report and delete this content immediately',
+        'Verify directly with the official organisation using trusted channels',
+      ],
+    };
+    if (displayRiskLevel === 'high') return {
       action: 'Verify with Multiple Independent Sources',
       icon: AlertTriangle,
       color: 'destructive',
@@ -91,7 +157,7 @@ export function ResultsPage() {
         'Be aware of emotional language influencing judgment',
       ],
     };
-    if (riskLevel === 'medium') return {
+    if (displayRiskLevel === 'medium') return {
       action: 'Review Content with Caution',
       icon: AlertCircle,
       color: 'warning',
@@ -169,6 +235,13 @@ export function ResultsPage() {
           <div>
             <h1 className="text-3xl sm:text-4xl neon-text">Analysis Report</h1>
             <p className="text-muted-foreground mt-1">Comprehensive manipulation detection results</p>
+            {emailBadge && (
+              <div className="mt-3">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs border font-mono ${emailBadge.className}`}>
+                  {emailBadge.label}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex gap-2 print:hidden">
@@ -196,8 +269,8 @@ export function ResultsPage() {
             <Activity className="w-3 h-3" />
             Manipulation Score
           </div>
-          <div className={`text-4xl font-mono neon-text text-${riskColor} mb-1`}>{manipulationScore}</div>
-          <div className="text-xs text-muted-foreground">{riskLabel}</div>
+          <div className={`text-4xl font-mono neon-text text-${riskColor} mb-1`} style={emailMediumRiskTextStyle}>{manipulationScore}</div>
+          <div className="text-xs text-muted-foreground" style={emailMediumRiskTextStyle}>{riskLabel}</div>
         </div>
 
         <div className="glass-card rounded-xl p-5 border-primary/30">
@@ -381,14 +454,22 @@ export function ResultsPage() {
                 <AlertCircle className={`w-5 h-5 text-${riskColor} flex-shrink-0 mt-0.5`} />
                 <div>
                   <p className={`text-sm text-${riskColor} mb-1`}>
-                    {riskLevel === 'high' ? 'Low Credibility Warning' : riskLevel === 'medium' ? 'Moderate Credibility Notice' : 'Source Appears Credible'}
+                    {displayRiskLevel === 'critical'
+                      ? 'Critical Credibility Warning'
+                      : displayRiskLevel === 'high'
+                        ? 'Low Credibility Warning'
+                        : displayRiskLevel === 'medium'
+                          ? 'Moderate Credibility Notice'
+                          : 'Source Appears Credible'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {riskLevel === 'high'
-                      ? 'This content shows patterns of sensationalised reporting. Cross-reference with established fact-checking organisations.'
-                      : riskLevel === 'medium'
-                        ? 'Some persuasive elements detected. Verify key claims with additional sources.'
-                        : 'Content appears relatively neutral. Standard verification practices still apply.'}
+                    {displayRiskLevel === 'critical'
+                      ? 'This content is highly risky. Do not act on it and verify only through official channels.'
+                      : displayRiskLevel === 'high'
+                        ? 'This content shows patterns of sensationalised reporting. Cross-reference with established fact-checking organisations.'
+                        : displayRiskLevel === 'medium'
+                          ? 'Some persuasive elements detected. Verify key claims with additional sources.'
+                          : 'Content appears relatively neutral. Standard verification practices still apply.'}
                   </p>
                 </div>
               </div>
@@ -616,13 +697,13 @@ export function ResultsPage() {
               </ResponsiveContainer>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className={`text-5xl font-mono neon-text text-${riskColor}`}>{manipulationScore}</div>
+                  <div className={`text-5xl font-mono neon-text text-${riskColor}`} style={emailMediumRiskTextStyle}>{manipulationScore}</div>
                   <div className="text-sm text-muted-foreground">/ 100</div>
                 </div>
               </div>
             </div>
             <div className="mt-4 text-center">
-              <div className={`text-lg font-mono text-${riskColor} mb-1`}>{riskLabel}</div>
+              <div className={`text-lg font-mono text-${riskColor} mb-1`} style={emailMediumRiskTextStyle}>{riskLabel}</div>
               <p className="text-xs text-muted-foreground">Based on {tactics.length} manipulation techniques</p>
             </div>
           </div>

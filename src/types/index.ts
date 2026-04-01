@@ -1,6 +1,6 @@
 export type AnalysisMode = 'news' | 'email' | 'social' | 'ad';
 export type InputMethod = 'text' | 'url' | 'upload';
-export type RiskLevel = 'high' | 'medium' | 'low';
+export type RiskLevel = 'high' | 'medium' | 'low' | 'critical';
 
 export interface HighlightedWord {
   word: string;
@@ -91,6 +91,7 @@ export interface AnalysisResult {
   tacticEvidence?:     TacticEvidence[];
   calibratedLabel?:    string;
   localScore?:         number;
+  emailClassification?: 'ham' | 'newsletter' | 'spam' | 'phishing';
   // Source info (for URL mode)
   source?: SourceInfo;
   // Traceability

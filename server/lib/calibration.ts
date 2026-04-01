@@ -65,7 +65,16 @@ function saveConfig(cfg: CalibrationConfig): void {
 // ─── Score → label ────────────────────────────────────────────────────────────
 
 /** Convert a 0–100 manipulation score to a calibrated label */
-export function scoreToLabel(score: number): ManipulationLabel {
+export function scoreToLabel(score: number): ManipulationLabel;
+export function scoreToLabel(score: number, mode: 'email'): EmailLabel;
+export function scoreToLabel(score: number, mode?: 'email'): ManipulationLabel | EmailLabel {
+  if (mode === 'email') {
+    if (score >= 76) return 'phishing';
+    if (score >= 45) return 'spam';
+    if (score >= 26) return 'newsletter';
+    return 'ham';
+  }
+
   const cfg = getCalibrationConfig();
   for (const [key, band] of Object.entries(cfg.thresholds) as [ManipulationLabel, ThresholdBand][]) {
     if (score >= band.min && score <= band.max) return key;
@@ -79,7 +88,12 @@ export function labelToRisk(label: ManipulationLabel): RiskLevel {
 }
 
 /** Convert a score directly to a risk level */
-export function scoreToRisk(score: number): RiskLevel {
+export function scoreToRisk(score: number): RiskLevel;
+export function scoreToRisk(score: number, mode: 'email', label?: string): EmailRiskLevel;
+export function scoreToRisk(score: number, mode?: 'email', label?: string): RiskLevel | EmailRiskLevel {
+  if (mode === 'email') {
+    return getEmailRiskLevel(score, label ?? scoreToLabel(score, 'email'));
+  }
   return labelToRisk(scoreToLabel(score));
 }
 
@@ -110,8 +124,8 @@ export function getRecommendedAction(score: number): string {
 
 export function getEmailRiskLevel(score: number, label: string): EmailRiskLevel {
   if (label === 'phishing' || score >= 76) return 'critical';
-  if (label === 'spam' || score >= 45) return score >= 61 ? 'high' : 'medium';
-  if (label === 'newsletter') return 'low';
+  if (label === 'spam' || score >= 45) return 'high';
+  if (label === 'newsletter' || score >= 26) return 'medium';
   return 'low'; // ham
 }
 
