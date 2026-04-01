@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { z } from 'zod';
 import { analyzeWithAI, compareWithAI, ANALYSIS_VERSION, RUBRIC_VERSION, MODEL_USED, isEmailAnalysisResult } from '../lib/openai.js';
+import { analyzeWithTransformer } from '../lib/transformerFallback.js';
 import { extractEvidence, buildHighlightedWordsFromEvidence } from '../lib/evidenceExtractor.js';
 import {
   scoreToLabel, scoreToRisk, getRecommendedAction,
@@ -85,11 +86,227 @@ analyzeRouter.post(
     }
 
     try {
-      // 3. Run OpenAI analysis (primary scorer)
-      const ai = await analyzeWithAI(text, mode);
-
-      // 4. Run local evidence extractor for cross-validation + highlighted words
       const localEvidence = extractEvidence(text, mode);
+      let ai: Awaited<ReturnType<typeof analyzeWithAI>> | null = null;
+      let tierUsed: 'transformer' | 'llm' | 'rule_based' = 'rule_based';
+
+      if (mode === 'email' || mode === 'news') {
+        try {
+          ai = await analyzeWithTransformer(text, mode);
+          tierUsed = 'transformer';
+          console.log(`[MindGuard] tier_used=${tierUsed}`);
+        } catch {
+          console.warn('[MindGuard] Tier 1 failed, trying Tier 2 (Groq LLM)...');
+          try {
+            ai = await analyzeWithAI(text, mode);
+            tierUsed = 'llm';
+            console.log(`[MindGuard] tier_used=${tierUsed}`);
+          } catch {
+            console.warn('[MindGuard] Tier 2 failed, using Tier 3 (Rule-based)...');
+            tierUsed = 'rule_based';
+            console.log(`[MindGuard] tier_used=${tierUsed}`);
+          }
+        }
+      } else {
+        try {
+          ai = await analyzeWithAI(text, mode);
+          tierUsed = 'llm';
+          console.log(`[MindGuard] tier_used=${tierUsed}`);
+        } catch {
+          console.warn('[MindGuard] LLM analysis failed, using rule-based fallback...');
+          tierUsed = 'rule_based';
+          console.log(`[MindGuard] tier_used=${tierUsed}`);
+        }
+      }
+
+      if (!ai) {
+        if (mode === 'email') {
+          const emailScore = localEvidence.manipulationScore;
+          const emailLabel = getEmailLabel(emailScore, localEvidence.emailLabel);
+          const riskLevel = getEmailRiskLevel(emailLabel);
+          const recommendedAction = getEmailRecommendedAction(emailLabel);
+          const manipulationDescription = getEmailManipulationDescription(emailLabel);
+          const highlightedWords = buildHighlightedWordsFromEvidence(text, localEvidence.tacticEvidence);
+          const redFlags = localEvidence.emailEvidence ?? [];
+          const tacticEvidence = localEvidence.tacticEvidence.map(t => ({
+            tactic: t.tactic,
+            phrases: t.phrases,
+            score: t.score,
+            contribution: t.contribution,
+            description: t.description,
+          }));
+          const dimensionScores = {
+            sender_legitimacy: Math.min(100, Math.max(0, Math.round(emailScore * 0.75))),
+            urgency_pressure: Math.min(100, Math.max(0, Math.round(emailScore * 0.85))),
+            threat_fear: Math.min(100, Math.max(0, Math.round(emailScore * 0.8))),
+            credential_payment_request: Math.min(100, Math.max(0, Math.round(emailScore * 0.9))),
+            link_url_analysis: Math.min(100, Math.max(0, Math.round(emailScore * 0.7))),
+            social_engineering_tactics: Math.min(100, Math.max(0, Math.round(emailScore * 0.78))),
+          };
+
+          const result = {
+            id: crypto.randomUUID(),
+            timestamp: new Date().toISOString(),
+            mode,
+            inputMethod,
+            inputText: text,
+            inputUrl: inputUrl || undefined,
+
+            manipulationScore: emailScore,
+            trustScore: Math.max(0, 100 - emailScore),
+            confidence: 75,
+            biasLevel: Math.round((dimensionScores.social_engineering_tactics + dimensionScores.sender_legitimacy) / 2),
+            emotionalIntensity: dimensionScores.threat_fear,
+            urgencyScore: dimensionScores.urgency_pressure,
+            authorityScore: dimensionScores.sender_legitimacy,
+            riskLevel,
+
+            tactics: [
+              { name: 'Sender', value: dimensionScores.sender_legitimacy, color: '#FF3B5C' },
+              { name: 'Urgency', value: dimensionScores.urgency_pressure, color: '#FFB347' },
+              { name: 'Threat', value: dimensionScores.threat_fear, color: '#7C3AED' },
+              { name: 'Creds', value: dimensionScores.credential_payment_request, color: '#3B82F6' },
+            ],
+            radarData: [
+              { metric: 'Sender', value: dimensionScores.sender_legitimacy },
+              { metric: 'Urgency', value: dimensionScores.urgency_pressure },
+              { metric: 'Threat', value: dimensionScores.threat_fear },
+              { metric: 'Creds', value: dimensionScores.credential_payment_request },
+              { metric: 'Links', value: dimensionScores.link_url_analysis },
+              { metric: 'SocEng', value: dimensionScores.social_engineering_tactics },
+            ],
+            barData: [
+              { tactic: 'Sender', score: dimensionScores.sender_legitimacy },
+              { tactic: 'Urgency', score: dimensionScores.urgency_pressure },
+              { tactic: 'Threat', score: dimensionScores.threat_fear },
+              { tactic: 'Creds', score: dimensionScores.credential_payment_request },
+              { tactic: 'Links', score: dimensionScores.link_url_analysis },
+            ],
+
+            suspiciousPhrases: redFlags.slice(0, 10).map(phrase => ({
+              phrase,
+              risk: riskLevel === 'critical' || riskLevel === 'high' ? 'high' : 'medium',
+              category: 'Email',
+            })),
+            highlightedWords,
+            neutralRewrite: text,
+            explanation: localEvidence.evidenceSummary,
+            recommendedAction,
+            tacticEvidence,
+            calibratedLabel: emailLabel,
+            localScore: localEvidence.manipulationScore,
+            source: (inputMethod === 'url' && inputUrl)
+              ? buildSourceInfo(inputUrl, Math.max(0, 100 - emailScore))
+              : undefined,
+            emailLabel,
+            emailRiskLevel: riskLevel,
+            emailRecommendedAction: recommendedAction,
+            emailManipulationDescription: manipulationDescription,
+            cognitiveBiasExploited:
+              emailLabel === 'urgency_manipulation' ? 'scarcity_bias'
+                : emailLabel === 'authority_exploitation' ? 'authority_bias'
+                  : emailLabel === 'fear_induction' || emailLabel === 'identity_deception' ? 'fear_bias'
+                    : emailLabel === 'financial_manipulation' ? 'greed_bias'
+                      : emailLabel === 'mild_influence' ? 'loss_aversion'
+                        : 'none',
+            manipulationTactic: localEvidence.dominantTactic ?? 'No strong manipulation tactic detected',
+            dimensionScores,
+            redFlags,
+            legitimateIndicators: [],
+            tier_used: tierUsed,
+            _meta: {
+              analysisVersion: ANALYSIS_VERSION,
+              rubricVersion: RUBRIC_VERSION,
+              calibrationVersion: getCalibrationVersion(),
+              modelUsed: MODEL_USED,
+            },
+          };
+
+          res.json(result);
+          return;
+        }
+
+        const score = localEvidence.manipulationScore;
+        const highlightedWords = buildHighlightedWordsFromEvidence(text, localEvidence.tacticEvidence);
+        const tacticEvidence = localEvidence.tacticEvidence.map(t => ({
+          tactic: t.tactic,
+          phrases: t.phrases,
+          score: t.score,
+          contribution: t.contribution,
+          description: t.description,
+        }));
+        const suspiciousPhrases = tacticEvidence
+          .flatMap(t => t.phrases.map(phrase => ({
+            phrase,
+            risk: t.score >= 30 ? 'high' as const : 'medium' as const,
+            category: t.tactic,
+          })))
+          .slice(0, 10);
+
+        const fallbackTactics = tacticEvidence.slice(0, 4).map((t, idx) => ({
+          name: t.tactic.split(' ')[0] || `Tactic${idx + 1}`,
+          value: Math.min(100, Math.max(0, t.contribution)),
+          color: ['#FF3B5C', '#FFB347', '#7C3AED', '#3B82F6'][idx] ?? '#00E5CC',
+        }));
+
+        const result = {
+          id: crypto.randomUUID(),
+          timestamp: new Date().toISOString(),
+          mode,
+          inputMethod,
+          inputText: text,
+          inputUrl: inputUrl || undefined,
+          manipulationScore: score,
+          trustScore: Math.max(0, 100 - score),
+          confidence: 75,
+          biasLevel: Math.min(100, Math.max(0, Math.round(score * 0.8))),
+          emotionalIntensity: Math.min(100, Math.max(0, Math.round(score * 0.85))),
+          urgencyScore: Math.min(100, Math.max(0, Math.round(score * 0.75))),
+          authorityScore: Math.min(100, Math.max(0, Math.round(score * 0.7))),
+          riskLevel: scoreToRisk(score),
+          tactics: fallbackTactics.length > 0 ? fallbackTactics : [
+            { name: 'Emotional', value: 0, color: '#FF3B5C' },
+            { name: 'Urgency', value: 0, color: '#FFB347' },
+            { name: 'Authority', value: 0, color: '#7C3AED' },
+            { name: 'Bandwagon', value: 0, color: '#3B82F6' },
+          ],
+          radarData: [
+            { metric: 'Emotional', value: Math.min(100, Math.max(0, Math.round(score * 0.85))) },
+            { metric: 'Urgency', value: Math.min(100, Math.max(0, Math.round(score * 0.75))) },
+            { metric: 'Bias', value: Math.min(100, Math.max(0, Math.round(score * 0.8))) },
+            { metric: 'Sensational', value: Math.min(100, Math.max(0, Math.round(score * 0.7))) },
+            { metric: 'Authority', value: Math.min(100, Math.max(0, Math.round(score * 0.7))) },
+          ],
+          barData: [
+            { tactic: 'Emotional', score: Math.min(100, Math.max(0, Math.round(score * 0.85))) },
+            { tactic: 'Urgency', score: Math.min(100, Math.max(0, Math.round(score * 0.75))) },
+            { tactic: 'Authority', score: Math.min(100, Math.max(0, Math.round(score * 0.7))) },
+            { tactic: 'Bandwagon', score: Math.min(100, Math.max(0, Math.round(score * 0.55))) },
+            { tactic: 'Fear', score: Math.min(100, Math.max(0, Math.round(score * 0.8))) },
+          ],
+          suspiciousPhrases,
+          highlightedWords,
+          neutralRewrite: text,
+          explanation: localEvidence.evidenceSummary,
+          recommendedAction: getRecommendedAction(score),
+          tacticEvidence,
+          calibratedLabel: scoreToLabel(score),
+          localScore: localEvidence.manipulationScore,
+          source: (inputMethod === 'url' && inputUrl)
+            ? buildSourceInfo(inputUrl, Math.max(0, 100 - score))
+            : undefined,
+          tier_used: tierUsed,
+          _meta: {
+            analysisVersion: ANALYSIS_VERSION,
+            rubricVersion: RUBRIC_VERSION,
+            calibrationVersion: getCalibrationVersion(),
+            modelUsed: MODEL_USED,
+          },
+        };
+
+        res.json(result);
+        return;
+      }
 
       if (mode === 'email' && isEmailAnalysisResult(ai)) {
         const emailScore = ai.manipulation_score;
@@ -174,6 +391,7 @@ analyzeRouter.post(
           dimensionScores:     ai.dimension_scores,
           redFlags:            ai.red_flags,
           legitimateIndicators:ai.legitimate_indicators,
+          tier_used:           tierUsed,
 
           _meta: {
             analysisVersion:    ANALYSIS_VERSION,
@@ -260,6 +478,7 @@ analyzeRouter.post(
         source: (inputMethod === 'url' && inputUrl)
           ? buildSourceInfo(inputUrl, ai.trustScore)
           : undefined,
+        tier_used:         tierUsed,
 
         // Traceability metadata
         _meta: {
