@@ -5,7 +5,7 @@ import { extractEvidence, buildHighlightedWordsFromEvidence } from '../lib/evide
 import {
   scoreToLabel, scoreToRisk, getRecommendedAction,
   getCalibrationVersion, getMinTextLength,
-  getEmailRiskLevel, getEmailRecommendedAction,
+  getEmailLabel, getEmailRiskLevel, getEmailRecommendedAction, getEmailManipulationDescription,
 } from '../lib/calibration.js';
 import { ApiError } from '../middleware/errorHandler.js';
 
@@ -93,9 +93,10 @@ analyzeRouter.post(
 
       if (mode === 'email' && isEmailAnalysisResult(ai)) {
         const emailScore = ai.manipulation_score;
-        const emailLabel = ai.label;
-        const riskLevel = getEmailRiskLevel(emailScore, emailLabel);
-        const recommendedAction = ai.recommended_action || getEmailRecommendedAction(emailLabel, emailScore);
+        const emailLabel = getEmailLabel(emailScore, ai.email_label);
+        const riskLevel = getEmailRiskLevel(emailLabel);
+        const recommendedAction = ai.recommended_action || getEmailRecommendedAction(emailLabel);
+        const manipulationDescription = getEmailManipulationDescription(emailLabel);
 
         const highlightedWords = buildHighlightedWordsFromEvidence(text, localEvidence.tacticEvidence);
         const tacticEvidence = localEvidence.tacticEvidence.map(t => ({
@@ -164,7 +165,12 @@ analyzeRouter.post(
             ? buildSourceInfo(inputUrl, Math.max(0, 100 - emailScore))
             : undefined,
 
-          emailClassification: emailLabel,
+          emailLabel,
+          emailRiskLevel: riskLevel,
+          emailRecommendedAction: recommendedAction,
+          emailManipulationDescription: manipulationDescription,
+          cognitiveBiasExploited: ai.cognitive_bias_exploited,
+          manipulationTactic: ai.manipulation_tactic,
           dimensionScores:     ai.dimension_scores,
           redFlags:            ai.red_flags,
           legitimateIndicators:ai.legitimate_indicators,

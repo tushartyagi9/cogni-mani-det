@@ -17,7 +17,14 @@ const CONFIG_PATH = join(__dirname, '../config/calibrationConfig.json');
 
 export type ManipulationLabel = 'neutral' | 'mild' | 'moderate' | 'strong' | 'extreme';
 export type RiskLevel         = 'low' | 'medium' | 'high';
-export type EmailLabel        = 'ham' | 'newsletter' | 'spam' | 'phishing';
+export type EmailLabel =
+  | 'legitimate'
+  | 'mild_influence'
+  | 'fear_induction'
+  | 'urgency_manipulation'
+  | 'authority_exploitation'
+  | 'financial_manipulation'
+  | 'identity_deception';
 export type EmailRiskLevel    = 'low' | 'medium' | 'high' | 'critical';
 
 export interface ThresholdBand {
@@ -69,10 +76,7 @@ export function scoreToLabel(score: number): ManipulationLabel;
 export function scoreToLabel(score: number, mode: 'email'): EmailLabel;
 export function scoreToLabel(score: number, mode?: 'email'): ManipulationLabel | EmailLabel {
   if (mode === 'email') {
-    if (score >= 76) return 'phishing';
-    if (score >= 45) return 'spam';
-    if (score >= 26) return 'newsletter';
-    return 'ham';
+    return getEmailLabel(score);
   }
 
   const cfg = getCalibrationConfig();
@@ -92,7 +96,7 @@ export function scoreToRisk(score: number): RiskLevel;
 export function scoreToRisk(score: number, mode: 'email', label?: string): EmailRiskLevel;
 export function scoreToRisk(score: number, mode?: 'email', label?: string): RiskLevel | EmailRiskLevel {
   if (mode === 'email') {
-    return getEmailRiskLevel(score, label ?? scoreToLabel(score, 'email'));
+    return getEmailRiskLevel(getEmailLabel(score, label));
   }
   return labelToRisk(scoreToLabel(score));
 }
@@ -122,24 +126,77 @@ export function getRecommendedAction(score: number): string {
   return RECOMMENDED_ACTIONS[scoreToLabel(score)];
 }
 
-export function getEmailRiskLevel(score: number, label: string): EmailRiskLevel {
-  if (label === 'phishing' || score >= 76) return 'critical';
-  if (label === 'spam' || score >= 45) return 'high';
-  if (label === 'newsletter' || score >= 26) return 'medium';
-  return 'low'; // ham
+export function getEmailLabel(score: number, aiLabel?: string): EmailLabel {
+  const validLabels: EmailLabel[] = [
+    'legitimate',
+    'mild_influence',
+    'fear_induction',
+    'urgency_manipulation',
+    'authority_exploitation',
+    'financial_manipulation',
+    'identity_deception',
+  ];
+  if (aiLabel && validLabels.includes(aiLabel as EmailLabel)) {
+    return aiLabel as EmailLabel;
+  }
+  if (score <= 15) return 'legitimate';
+  if (score <= 30) return 'mild_influence';
+  if (score <= 50) return 'fear_induction';
+  if (score <= 65) return 'urgency_manipulation';
+  if (score <= 75) return 'authority_exploitation';
+  if (score <= 85) return 'financial_manipulation';
+  return 'identity_deception';
 }
 
-export function getEmailRecommendedAction(label: string, score: number): string {
-  if (label === 'phishing' || score >= 76) {
-    return 'DO NOT click any links or provide any information. This is a phishing attempt. Delete immediately and report to your email provider.';
-  }
-  if (label === 'spam' || score >= 45) {
-    return 'This appears to be unsolicited commercial email. Do not purchase anything or click unknown links. Mark as spam.';
-  }
-  if (label === 'newsletter') {
-    return 'This appears to be a legitimate newsletter or promotional email. You can safely read it, but use the unsubscribe link if unwanted.';
-  }
-  return 'This appears to be a legitimate email. No action required.';
+export function getEmailRiskLevel(label: string): EmailRiskLevel {
+  if (label === 'legitimate') return 'low';
+  if (label === 'mild_influence') return 'low';
+  if (label === 'fear_induction') return 'medium';
+  if (label === 'urgency_manipulation') return 'high';
+  if (label === 'authority_exploitation') return 'high';
+  if (label === 'financial_manipulation') return 'critical';
+  if (label === 'identity_deception') return 'critical';
+  return 'low';
+}
+
+export function getEmailRecommendedAction(label: string): string {
+  const actions: Record<string, string> = {
+    legitimate:
+      'This email appears legitimate. No action needed.',
+    mild_influence:
+      'This is a marketing or newsletter email using mild persuasion. Safe to read. Unsubscribe if unwanted.',
+    fear_induction:
+      'This email uses fear tactics to pressure you. Verify the claim independently before taking any action. Do not click links.',
+    urgency_manipulation:
+      'This email creates artificial urgency to bypass your rational thinking. Legitimate organizations never demand action within hours. Ignore the deadline.',
+    authority_exploitation:
+      'This email impersonates a trusted authority (bank, government, company). Verify directly with the official organization using their official website or phone number - not the contact details in this email.',
+    financial_manipulation:
+      'DANGER: This email uses financial deception - fake prizes, investment fraud, or advance fee scams. Never send money or share bank details. Report at cybercrime.gov.in.',
+    identity_deception:
+      'CRITICAL: This is a sophisticated social engineering attack designed to steal your identity, credentials, or money. Do NOT click any links, call any numbers, or share any information. Delete immediately and report.',
+  };
+  return actions[label] || 'Exercise caution with this email.';
+}
+
+export function getEmailManipulationDescription(label: string): string {
+  const descriptions: Record<string, string> = {
+    legitimate:
+      'No cognitive manipulation detected. Content is straightforward and informational.',
+    mild_influence:
+      'Uses standard persuasion techniques such as social proof, mild urgency, or promotional language. Common in legitimate marketing.',
+    fear_induction:
+      'Deliberately induces fear or anxiety to override rational decision-making. Creates a threat that may not be real.',
+    urgency_manipulation:
+      'Exploits time pressure to prevent the recipient from thinking critically or verifying claims.',
+    authority_exploitation:
+      'Impersonates a trusted authority figure (bank, government, CEO) to gain unquestioned compliance.',
+    financial_manipulation:
+      'Exploits greed or financial anxiety through false promises of gain or threats of financial loss.',
+    identity_deception:
+      'Combines multiple manipulation tactics - impersonation, fear, urgency, and isolation - to completely override rational thinking and extract credentials or money.',
+  };
+  return descriptions[label] || '';
 }
 
 // ─── Calibrate thresholds from evaluation results ────────────────────────────

@@ -1,6 +1,14 @@
 export type AnalysisMode = 'news' | 'email' | 'social' | 'ad';
 export type InputMethod = 'text' | 'url' | 'upload';
 export type RiskLevel = 'high' | 'medium' | 'low' | 'critical';
+export type EmailCognitiveLabel =
+  | 'legitimate'
+  | 'mild_influence'
+  | 'fear_induction'
+  | 'urgency_manipulation'
+  | 'authority_exploitation'
+  | 'financial_manipulation'
+  | 'identity_deception';
 
 export interface HighlightedWord {
   word: string;
@@ -91,7 +99,12 @@ export interface AnalysisResult {
   tacticEvidence?:     TacticEvidence[];
   calibratedLabel?:    string;
   localScore?:         number;
-  emailClassification?: 'ham' | 'newsletter' | 'spam' | 'phishing';
+  emailLabel?: EmailCognitiveLabel;
+  emailRiskLevel?: string;
+  emailRecommendedAction?: string;
+  emailManipulationDescription?: string;
+  cognitiveBiasExploited?: string;
+  manipulationTactic?: string;
   // Source info (for URL mode)
   source?: SourceInfo;
   // Traceability

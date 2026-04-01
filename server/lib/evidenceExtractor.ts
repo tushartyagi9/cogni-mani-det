@@ -47,7 +47,7 @@ export interface ExtractionResult {
   categoryScores:     Record<string, number>;
   dominantTactic:     string | null;
   evidenceSummary:    string;
-  emailLabel?:        'ham' | 'newsletter' | 'spam' | 'phishing';
+  emailLabel?:        'legitimate' | 'mild_influence' | 'fear_induction' | 'urgency_manipulation' | 'authority_exploitation' | 'financial_manipulation' | 'identity_deception';
   emailEvidence?:     string[];
 }
 
@@ -79,118 +79,116 @@ export function extractEvidenceByMode(text: string, mode: string): ExtractionRes
     let score = 0;
     const evidence: string[] = [];
 
-    // HIGH CONFIDENCE PHISHING (+25 to +35 each)
-    const phishingHighConfidence = [
-      'verify your account', 'click here to verify', 'update your kyc',
-      'your account has been suspended', 'your account will be permanently',
-      'account suspended',
-      'enter your otp', 'confirm your identity', 'linked to illegal activities',
-      'avoid arrest', 'immediate arrest', 'cyber crime division',
-      'income tax refund', 'claim your refund', 'wire transfer',
-      'ceo request', 'keep this confidential', 'do not tell anyone',
-      'your aadhaar has been', 'your pan card will be',
-      'sim card will be blocked', 'trai disconnection', 'upi pin',
-      'net banking password', "mother's maiden name"
+    const identityDeceptionPatterns = [
+      'cbi notice', 'ed notice', 'arrest warrant',
+      'do not contact family', 'confidential matter',
+      'call our officer', 'cyber crime cell',
+      'wire transfer', 'keep this confidential',
+      'upi pin', 'net banking password', 'enter your otp',
+      'aadhaar linked to illegal', 'money laundering',
     ];
 
-    // MEDIUM CONFIDENCE PHISHING (+12 to +20 each)
-    const phishingMedium = [
-      'unusual activity detected', 'sign in from unrecognized device',
-      'restore your access', 'account will be closed', 'failure to comply',
-      'processing fee', 'claim your prize', 'you have been selected',
-      'mandatory verification', 'security upgrade', 'action required',
-      'your funds may be held', 'data will be deleted',
-      'subscription expires today', 'account limited', 'kyc expired', 'kyc has expired'
+    const financialManipulationPatterns = [
+      'you have won', 'you won', 'lucky draw', 'claim your prize',
+      'processing fee', 'advance fee', 'refundable deposit',
+      'guaranteed returns', 'sebi approved', 'shark tank',
+      'pm scholarship', 'government lottery',
+      'income tax refund', 'claim your refund',
     ];
 
-    // URGENCY INDICATORS (+8 to +15 each)
-    const urgencyPatterns = [
+    const authorityExploitationPatterns = [
+      'rbi circular', 'trai notice', 'it department',
+      'sbi kyc', 'hdfc kyc', 'icici kyc',
+      'verify your account', 'verify your identity', 'mandatory verification',
+      'kyc update',
+      'regulatory compliance', 'legal action',
+    ];
+
+    const urgencyManipulationPatterns = [
       'within 24 hours', 'within 48 hours', 'within 2 hours',
-      'within 1 hour', 'expires today', 'act now', 'act immediately',
-      'respond immediately', 'last chance', 'limited time',
-      'before midnight', 'today only', 'offer ends', 'offer valid till', 'immediate action required'
+      'expires today', 'act now', 'immediate action required',
+      'last chance', 'today only', 'before midnight',
+      'offer till', 'sunday only', 'by 31 march',
     ];
 
-    // COMMERCIAL SPAM INDICATORS (+10 to +20 each)
-    const spamCommercialPatterns = [
-      'click here to claim', 'limited spots available', 'no experience needed',
-      'work from home', 'earn money online', 'guaranteed returns',
-      '100% money back', 'doctors don\'t want', 'secret formula',
-      'free iphone', 'you\'ve been selected', 'congratulations you have won',
-      'advance fee', 'processing charge', 'apply now'
+    const fearInductionPatterns = [
+      'unusual activity', 'account suspended',
+      'payment failed', 'account will be closed',
+      'security alert', 'unauthorized access',
+      'your account has been', 'action required', 'account frozen',
     ];
 
-    // FEAR/THREAT INDICATORS (+10 to +25 each)
-    const fearPatterns = [
-      'legal action', 'police will be', 'you will be arrested',
-      'criminal charges', 'account freeze', 'funds will be frozen',
-      'permanent suspension', 'permanently deleted', 'fir will be registered',
-      'warrant has been issued', 'arrest warrant', 'do not contact family',
-      'confidential matter'
+    const mildInfluencePatterns = [
+      'flash sale', 'sale', '50% off', 'off today', 'shop at',
+      'limited time offer', 'exclusive deal',
+      'special discount', 'members only',
+      'you have been selected', 'congratulations',
+      'work from home', 'from home', 'no experience needed', 'make rs.',
     ];
 
-    // LEGITIMATE INDICATORS (-5 to -15 each)
     const legitimatePatterns = [
-      'unsubscribe', 'privacy policy', 'tracking number', 'order number',
-      'invoice number', 'your appointment is confirmed', 'no action needed',
-      'do not share this otp', 'we will never ask for your password',
-      'pnr', 'have a safe journey'
+      'unsubscribe', 'do not share otp',
+      'pnr', 'tracking number', 'order confirmed',
+      'have a safe journey', 'no action needed',
+      'official website only',
     ];
 
-    // Score computation
-    for (const pattern of phishingHighConfidence) {
+    for (const pattern of identityDeceptionPatterns) {
       if (textLower.includes(pattern)) {
-        score += 30;
-        evidence.push(`High-risk phrase: "${pattern}"`);
+        score += 35;
+        evidence.push(`Identity deception signal: "${pattern}"`);
       }
     }
-    for (const pattern of phishingMedium) {
+    for (const pattern of financialManipulationPatterns) {
       if (textLower.includes(pattern)) {
-        score += 15;
-        evidence.push(`Suspicious phrase: "${pattern}"`);
+        score += 28;
+        evidence.push(`Financial manipulation signal: "${pattern}"`);
       }
     }
-    for (const pattern of urgencyPatterns) {
+    for (const pattern of authorityExploitationPatterns) {
       if (textLower.includes(pattern)) {
-        score += 10;
-        evidence.push(`Urgency indicator: "${pattern}"`);
+        score += 22;
+        evidence.push(`Authority exploitation signal: "${pattern}"`);
       }
     }
-    for (const pattern of fearPatterns) {
+    for (const pattern of urgencyManipulationPatterns) {
       if (textLower.includes(pattern)) {
         score += 18;
-        evidence.push(`Threat/fear phrase: "${pattern}"`);
+        evidence.push(`Urgency manipulation signal: "${pattern}"`);
       }
     }
-    for (const pattern of spamCommercialPatterns) {
+    for (const pattern of fearInductionPatterns) {
       if (textLower.includes(pattern)) {
-        score += 18;
-        evidence.push(`Commercial spam indicator: "${pattern}"`);
+        score += 12;
+        evidence.push(`Fear induction signal: "${pattern}"`);
+      }
+    }
+    for (const pattern of mildInfluencePatterns) {
+      if (textLower.includes(pattern)) {
+        score += 6;
+        evidence.push(`Mild influence signal: "${pattern}"`);
       }
     }
     for (const pattern of legitimatePatterns) {
       if (textLower.includes(pattern)) {
-        score -= 10;
-      }
-    }
-
-    // Domain suspicion check
-    const suspiciousDomainPatterns = [
-      'sbi-secure', 'sbi-verify', 'hdfc-kyc', 'paypal-verify',
-      'accounts-google-security', 'microsoft365-renew',
-      'incometax-refund', 'whatsapp-appeal', 'rbi-kyc',
-      'npci-upi', 'trai-authority', 'cbi-cyber'
-    ];
-    for (const pattern of suspiciousDomainPatterns) {
-      if (textLower.includes(pattern)) {
-        score += 35;
-        evidence.push(`Suspicious domain pattern: "${pattern}"`);
+        score -= 12;
       }
     }
 
     const boundedScore = Math.max(0, Math.min(100, score));
-    const label = boundedScore >= 76 ? 'phishing' : boundedScore >= 45 ? 'spam' : boundedScore >= 26 ? 'newsletter' : 'ham';
-    const risk = boundedScore >= 61 ? 'high' : boundedScore >= 45 ? 'medium' : 'low';
+    const label =
+      boundedScore <= 15 ? 'legitimate'
+      : boundedScore <= 30 ? 'mild_influence'
+      : boundedScore <= 50 ? 'fear_induction'
+      : boundedScore <= 65 ? 'urgency_manipulation'
+      : boundedScore <= 75 ? 'authority_exploitation'
+      : boundedScore <= 85 ? 'financial_manipulation'
+      : 'identity_deception';
+    const risk =
+      label === 'legitimate' || label === 'mild_influence' ? 'low'
+      : label === 'fear_induction' ? 'medium'
+      : label === 'urgency_manipulation' || label === 'authority_exploitation' ? 'high'
+      : 'high';
 
     return {
       manipulationScore: boundedScore,

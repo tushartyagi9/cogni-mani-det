@@ -63,13 +63,19 @@ export function ResultsPage() {
     manipulationScore, trustScore, confidence, biasLevel,
     emotionalIntensity, urgencyScore, riskLevel, tactics,
     radarData, barData, suspiciousPhrases, highlightedWords,
-    neutralRewrite, inputText, source, mode, emailClassification,
+    neutralRewrite, inputText, source, mode, emailLabel, emailRiskLevel,
+    emailRecommendedAction, emailManipulationDescription,
+    cognitiveBiasExploited, manipulationTactic,
   } = currentResult;
 
   type DisplayRiskLevel = 'low' | 'medium' | 'high' | 'critical';
   const isEmailMode = mode === 'email';
-  const emailDisplayRisk: DisplayRiskLevel =
-    manipulationScore >= 76 ? 'critical' : manipulationScore >= 45 ? 'high' : manipulationScore >= 26 ? 'medium' : 'low';
+  const emailDisplayRisk: DisplayRiskLevel = (emailRiskLevel as DisplayRiskLevel | undefined) ?? (
+    manipulationScore <= 30 ? 'low'
+      : manipulationScore <= 50 ? 'medium'
+        : manipulationScore <= 75 ? 'high'
+          : 'critical'
+  );
   const displayRiskLevel: DisplayRiskLevel = isEmailMode
     ? emailDisplayRisk
     : (riskLevel as DisplayRiskLevel);
@@ -110,26 +116,47 @@ export function ResultsPage() {
     ? { color: '#FACC15' }
     : undefined;
 
-  const emailBadge = isEmailMode && emailClassification
+  const emailBadge = isEmailMode && emailLabel
     ? ({
-        ham: {
-          label: 'Legitimate Email',
+        legitimate: {
+          label: '✓ Legitimate Email',
           className: 'bg-primary/20 text-primary border-primary/40',
         },
-        newsletter: {
-          label: 'Newsletter',
-          className: 'bg-chart-5/20 text-chart-5 border-chart-5/40',
+        mild_influence: {
+          label: '💡 Mild Influence',
+          className: 'bg-blue-500/20 text-blue-300 border-blue-400/40',
         },
-        spam: {
-          label: 'Spam',
+        fear_induction: {
+          label: '⚠️ Fear Induction',
+          className: 'bg-yellow-500/20 text-yellow-300 border-yellow-400/40',
+        },
+        urgency_manipulation: {
+          label: '⏰ Urgency Manipulation',
           className: 'bg-warning/20 text-warning border-warning/40',
         },
-        phishing: {
-          label: 'Phishing',
+        authority_exploitation: {
+          label: '🎭 Authority Exploitation',
+          className: 'bg-orange-500/20 text-orange-300 border-orange-400/40',
+        },
+        financial_manipulation: {
+          label: '💰 Financial Manipulation',
           className: 'bg-destructive/20 text-destructive border-destructive/40',
         },
-      } as const)[emailClassification]
+        identity_deception: {
+          label: '☠️ Identity Deception',
+          className: 'bg-purple-500/20 text-purple-300 border-purple-400/40',
+        },
+      } as const)[emailLabel]
     : null;
+
+  const emailActionClass =
+    displayRiskLevel === 'critical'
+      ? 'bg-destructive/10 border-destructive/40 text-destructive'
+      : displayRiskLevel === 'high'
+        ? 'bg-warning/10 border-warning/40 text-warning'
+        : displayRiskLevel === 'medium'
+          ? 'bg-yellow-500/10 border-yellow-400/40 text-yellow-300'
+          : 'bg-primary/10 border-primary/40 text-primary';
 
   // -----------------------------------------------------------------------
   // Recommended action based on score
@@ -261,6 +288,41 @@ export function ResultsPage() {
           </button>
         </div>
       </div>
+
+      {isEmailMode && (
+        <div className="glass-card rounded-xl p-6 mb-8 border-primary/30">
+          <h2 className="text-sm uppercase tracking-wider text-muted-foreground mb-4">Email Cognitive Analysis</h2>
+          {emailBadge && (
+            <div className="mb-4">
+              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm border font-mono ${emailBadge.className}`}>
+                {emailBadge.label}
+              </span>
+            </div>
+          )}
+          {emailManipulationDescription && (
+            <div className="mb-4 p-4 rounded-lg bg-secondary/30 border border-border">
+              <p className="text-sm text-foreground">{emailManipulationDescription}</p>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-3 mb-4">
+            {cognitiveBiasExploited && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs border bg-chart-5/20 text-chart-5 border-chart-5/40 font-mono">
+                Bias: {cognitiveBiasExploited}
+              </span>
+            )}
+            {manipulationTactic && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs border bg-secondary/50 text-foreground border-border font-mono">
+                Tactic: {manipulationTactic}
+              </span>
+            )}
+          </div>
+          <div className={`p-4 rounded-lg border ${emailActionClass}`}>
+            <p className="text-sm leading-relaxed">
+              {emailRecommendedAction ?? recommendation.action}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Top Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

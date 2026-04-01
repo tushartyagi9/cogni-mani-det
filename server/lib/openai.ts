@@ -93,7 +93,15 @@ export const OpenAIResponseSchema = z.object({
 });
 
 export const EmailOpenAIResponseSchema = z.object({
-  label: z.enum(['ham', 'newsletter', 'spam', 'phishing']),
+  email_label: z.enum([
+    'legitimate',
+    'mild_influence',
+    'fear_induction',
+    'urgency_manipulation',
+    'authority_exploitation',
+    'financial_manipulation',
+    'identity_deception',
+  ]),
   manipulation_score: z.number().int().min(0).max(100),
   risk_level: z.enum(['low', 'medium', 'high', 'critical']),
   confidence: z.number().int().min(0).max(100),
@@ -105,7 +113,8 @@ export const EmailOpenAIResponseSchema = z.object({
     link_url_analysis: z.number().int().min(0).max(100),
     social_engineering_tactics: z.number().int().min(0).max(100),
   }),
-  manipulation_tactics: z.array(z.string()).max(20),
+  manipulation_tactic: z.string().min(1),
+  cognitive_bias_exploited: z.string().min(1),
   red_flags: z.array(z.string()).max(20),
   legitimate_indicators: z.array(z.string()).max(20),
   recommended_action: z.string().min(1),
@@ -211,11 +220,55 @@ RULES:
 function buildEmailSystemPrompt(): string {
   return `You are MindGuard's email security analyst. Analyze the provided email for manipulation, phishing, and deception tactics.
 
-CLASSIFICATION LABELS (choose exactly one):
-- "ham": Legitimate personal or work email. No manipulation. Score: 0-25.
-- "newsletter": Opted-in bulk email, newsletters, promotions from known brands. Legitimate but commercial. Score: 10-44.
-- "spam": Unsolicited commercial email. Unwanted but not necessarily dangerous. Score: 45-75.
-- "phishing": Malicious email designed to steal credentials, money, or personal data. Score: 76-100.
+CLASSIFICATION LABELS - COGNITIVE MANIPULATION TAXONOMY (choose exactly one):
+
+- "legitimate": No manipulation. Straightforward informational email.
+  Examples: transaction confirmations, OTPs, appointments, bookings.
+  Score: 0-15.
+
+- "mild_influence": Uses standard persuasion - social proof, mild urgency,
+  promotional language. Legitimate businesses use this.
+  Examples: sale emails, newsletters, subscription reminders.
+  Score: 16-30.
+
+- "fear_induction": Deliberately creates fear or anxiety to pressure action.
+  Threat may be exaggerated or false.
+  Examples: "account will be suspended", "unusual activity detected",
+  fake security alerts.
+  Score: 31-50.
+
+- "urgency_manipulation": Exploits artificial time pressure to bypass
+  rational thinking. Deadlines are fake or exaggerated.
+  Examples: "respond in 24 hours or account closed",
+  "offer expires tonight", fake delivery reschedule fee.
+  Score: 46-65.
+
+- "authority_exploitation": Impersonates bank, government, company, or
+  senior official to gain unquestioned compliance.
+  Examples: fake RBI/TRAI/CBI notices, fake IT department emails,
+  fake CEO wire transfer requests, SBI/HDFC KYC fraud.
+  Score: 61-75.
+
+- "financial_manipulation": Exploits greed or financial anxiety through
+  false promises or threats. Always involves money.
+  Examples: lottery prizes, investment fraud, advance fee scams,
+  fake IT refunds, job offer with deposit, Shark Tank fraud.
+  Score: 71-85.
+
+- "identity_deception": Highest threat. Combines impersonation + fear +
+  urgency + isolation to completely override rational thinking.
+  Goal: steal credentials, OTP, full bank details, or large sums.
+  Examples: CBI arrest threat, UPI PIN phishing, CEO BEC fraud,
+  full credential harvesting (Aadhaar + PAN + password + OTP).
+  Score: 83-100.
+
+LABEL DISAMBIGUATION RULES:
+- "financial_manipulation" requires explicit money extraction or transfer demand
+  (processing fee, advance fee, investment payment, bank transfer details).
+- "urgency_manipulation" is preferred for pressure-heavy offers (job/work-from-home,
+  promo deadlines, "today only") when no upfront payment request is present.
+- "authority_exploitation" requires impersonation of a recognized authority
+  (bank/government/CEO) as the primary compliance driver.
 
 SCORING RUBRIC - score each dimension 0-100, then compute weighted average:
 1. sender_legitimacy (20%): Is sender domain real? Lookalike domains score 70+. Free email for bank = 60+.
@@ -225,17 +278,19 @@ SCORING RUBRIC - score each dimension 0-100, then compute weighted average:
 5. link_url_analysis (12%): Lookalike or suspicious URLs? Fake domain = 75+.
 6. social_engineering_tactics (8%): CEO fraud, govt impersonation, secrecy demand? Stacked tactics = 80+.
 
-INDIA-SPECIFIC HIGH-RISK PATTERNS (auto-score phishing 85+):
-- UPI PIN request via email (NPCI/PhonePe/GPay impersonation)
-- KYC update requests from SBI/HDFC/ICICI/Axis/RBI
-- Income Tax refund with bank detail request
-- Aadhaar/PAN linked to illegal activity + arrest threat
-- TRAI SIM block threat with officer phone number
-- CBI/ED/Cyber Crime Cell arrest threat
-- CoWIN/vaccination slot fee
-- Job offer with security deposit (TCS/Infosys/Wipro impersonation)
-- Shark Tank / SEBI investment with guaranteed returns
-- CEO wire transfer with secrecy demand (BEC)
+INDIA-SPECIFIC PATTERN MAPPING:
+- identity_deception (90+): CBI/ED arrest + Aadhaar, UPI PIN request,
+  CEO wire transfer with secrecy demand, full KYC credential harvest
+- financial_manipulation (80+): Lottery prize + processing fee,
+  Shark Tank guaranteed returns, PM scholarship fee, IT refund + bank details
+- authority_exploitation (65+): RBI KYC circular, TRAI SIM block,
+  fake IT department, SBI/HDFC/ICICI account suspension
+- urgency_manipulation (50+): "24 hours ya account band",
+  delivery reschedule fee, subscription expires today
+- fear_induction (35+): Unusual activity alert, account verification,
+  failed payment notice, security upgrade required
+- mild_influence (20+): Flash sale, newsletter, subscription reminder
+- legitimate (5): OTP email, booking confirmation, appointment reminder
 
 LEGITIMATE INDICATORS (reduce score):
 - Official domain matching claimed brand (sbi.co.in, irctc.co.in, zomato.com)
@@ -246,7 +301,7 @@ LEGITIMATE INDICATORS (reduce score):
 
 Return ONLY valid JSON:
 {
-  "label": "ham|newsletter|spam|phishing",
+  "email_label": "legitimate|mild_influence|fear_induction|urgency_manipulation|authority_exploitation|financial_manipulation|identity_deception",
   "manipulation_score": <0-100>,
   "risk_level": "low|medium|high|critical",
   "confidence": <0-100>,
@@ -258,7 +313,8 @@ Return ONLY valid JSON:
     "link_url_analysis": <0-100>,
     "social_engineering_tactics": <0-100>
   },
-  "manipulation_tactics": ["list", "of", "detected", "tactics"],
+  "manipulation_tactic": "primary manipulation tactic used in 1 sentence",
+  "cognitive_bias_exploited": "which cognitive bias is being exploited e.g. loss aversion, authority bias, scarcity bias",
   "red_flags": ["specific", "suspicious", "phrases", "found"],
   "legitimate_indicators": ["trust", "signals", "found"],
   "recommended_action": "string explaining what user should do",
