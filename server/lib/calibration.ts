@@ -17,6 +17,8 @@ const CONFIG_PATH = join(__dirname, '../config/calibrationConfig.json');
 
 export type ManipulationLabel = 'neutral' | 'mild' | 'moderate' | 'strong' | 'extreme';
 export type RiskLevel         = 'low' | 'medium' | 'high';
+export type EmailLabel        = 'ham' | 'newsletter' | 'spam' | 'phishing';
+export type EmailRiskLevel    = 'low' | 'medium' | 'high' | 'critical';
 
 export interface ThresholdBand {
   min:         number;
@@ -104,6 +106,26 @@ const RECOMMENDED_ACTIONS: Record<ManipulationLabel, string> = {
 
 export function getRecommendedAction(score: number): string {
   return RECOMMENDED_ACTIONS[scoreToLabel(score)];
+}
+
+export function getEmailRiskLevel(score: number, label: string): EmailRiskLevel {
+  if (label === 'phishing' || score >= 76) return 'critical';
+  if (label === 'spam' || score >= 45) return score >= 61 ? 'high' : 'medium';
+  if (label === 'newsletter') return 'low';
+  return 'low'; // ham
+}
+
+export function getEmailRecommendedAction(label: string, score: number): string {
+  if (label === 'phishing' || score >= 76) {
+    return 'DO NOT click any links or provide any information. This is a phishing attempt. Delete immediately and report to your email provider.';
+  }
+  if (label === 'spam' || score >= 45) {
+    return 'This appears to be unsolicited commercial email. Do not purchase anything or click unknown links. Mark as spam.';
+  }
+  if (label === 'newsletter') {
+    return 'This appears to be a legitimate newsletter or promotional email. You can safely read it, but use the unsubscribe link if unwanted.';
+  }
+  return 'This appears to be a legitimate email. No action required.';
 }
 
 // ─── Calibrate thresholds from evaluation results ────────────────────────────

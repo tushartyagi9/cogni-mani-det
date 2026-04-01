@@ -1,10 +1,11 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { z } from 'zod';
-import { analyzeWithAI, compareWithAI, ANALYSIS_VERSION, RUBRIC_VERSION, MODEL_USED } from '../lib/openai.js';
+import { analyzeWithAI, compareWithAI, ANALYSIS_VERSION, RUBRIC_VERSION, MODEL_USED, isEmailAnalysisResult } from '../lib/openai.js';
 import { extractEvidence, buildHighlightedWordsFromEvidence } from '../lib/evidenceExtractor.js';
 import {
   scoreToLabel, scoreToRisk, getRecommendedAction,
   getCalibrationVersion, getMinTextLength,
+  getEmailRiskLevel, getEmailRecommendedAction,
 } from '../lib/calibration.js';
 import { ApiError } from '../middleware/errorHandler.js';
 
@@ -88,7 +89,97 @@ analyzeRouter.post(
       const ai = await analyzeWithAI(text, mode);
 
       // 4. Run local evidence extractor for cross-validation + highlighted words
-      const localEvidence = extractEvidence(text);
+      const localEvidence = extractEvidence(text, mode);
+
+      if (mode === 'email' && isEmailAnalysisResult(ai)) {
+        const emailScore = ai.manipulation_score;
+        const emailLabel = ai.label;
+        const riskLevel = getEmailRiskLevel(emailScore, emailLabel);
+        const recommendedAction = ai.recommended_action || getEmailRecommendedAction(emailLabel, emailScore);
+
+        const highlightedWords = buildHighlightedWordsFromEvidence(text, localEvidence.tacticEvidence);
+        const tacticEvidence = localEvidence.tacticEvidence.map(t => ({
+          tactic:       t.tactic,
+          phrases:      t.phrases,
+          score:        t.score,
+          contribution: t.contribution,
+          description:  t.description,
+        }));
+
+        const result = {
+          id:                crypto.randomUUID(),
+          timestamp:         new Date().toISOString(),
+          mode,
+          inputMethod,
+          inputText:         text,
+          inputUrl:          inputUrl || undefined,
+
+          manipulationScore: emailScore,
+          trustScore:        Math.max(0, 100 - emailScore),
+          confidence:        ai.confidence,
+          biasLevel:         Math.round((ai.dimension_scores.social_engineering_tactics + ai.dimension_scores.sender_legitimacy) / 2),
+          emotionalIntensity:ai.dimension_scores.threat_fear,
+          urgencyScore:      ai.dimension_scores.urgency_pressure,
+          authorityScore:    ai.dimension_scores.sender_legitimacy,
+          riskLevel,
+
+          tactics: [
+            { name: 'Sender',    value: ai.dimension_scores.sender_legitimacy,         color: '#FF3B5C' },
+            { name: 'Urgency',   value: ai.dimension_scores.urgency_pressure,          color: '#FFB347' },
+            { name: 'Threat',    value: ai.dimension_scores.threat_fear,               color: '#7C3AED' },
+            { name: 'Creds',     value: ai.dimension_scores.credential_payment_request, color: '#3B82F6' },
+          ],
+          radarData: [
+            { metric: 'Sender',   value: ai.dimension_scores.sender_legitimacy },
+            { metric: 'Urgency',  value: ai.dimension_scores.urgency_pressure },
+            { metric: 'Threat',   value: ai.dimension_scores.threat_fear },
+            { metric: 'Creds',    value: ai.dimension_scores.credential_payment_request },
+            { metric: 'Links',    value: ai.dimension_scores.link_url_analysis },
+            { metric: 'SocEng',   value: ai.dimension_scores.social_engineering_tactics },
+          ],
+          barData: [
+            { tactic: 'Sender',    score: ai.dimension_scores.sender_legitimacy },
+            { tactic: 'Urgency',   score: ai.dimension_scores.urgency_pressure },
+            { tactic: 'Threat',    score: ai.dimension_scores.threat_fear },
+            { tactic: 'Creds',     score: ai.dimension_scores.credential_payment_request },
+            { tactic: 'Links',     score: ai.dimension_scores.link_url_analysis },
+          ],
+
+          suspiciousPhrases: ai.red_flags.slice(0, 10).map(phrase => ({
+            phrase,
+            risk: riskLevel === 'critical' || riskLevel === 'high' ? 'high' : 'medium',
+            category: 'Email',
+          })),
+          highlightedWords,
+
+          neutralRewrite:    text,
+          explanation:       ai.explanation,
+          recommendedAction,
+
+          tacticEvidence,
+          calibratedLabel:   emailLabel,
+          localScore:        localEvidence.manipulationScore,
+
+          source: (inputMethod === 'url' && inputUrl)
+            ? buildSourceInfo(inputUrl, Math.max(0, 100 - emailScore))
+            : undefined,
+
+          emailClassification: emailLabel,
+          dimensionScores:     ai.dimension_scores,
+          redFlags:            ai.red_flags,
+          legitimateIndicators:ai.legitimate_indicators,
+
+          _meta: {
+            analysisVersion:    ANALYSIS_VERSION,
+            rubricVersion:      RUBRIC_VERSION,
+            calibrationVersion: getCalibrationVersion(),
+            modelUsed:          MODEL_USED,
+          },
+        };
+
+        res.json(result);
+        return;
+      }
 
       // 5. Build highlighted words from AI phrases + local evidence
       const highlightedWords = buildHighlightedWordsFromEvidence(

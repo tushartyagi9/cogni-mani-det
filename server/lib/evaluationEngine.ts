@@ -178,7 +178,7 @@ function sliceMetrics(results: SampleResult[], labels: ManipulationLabel[]): Sli
 
 function scoreLocalSamples(samples: EnrichedSample[]): SampleResult[] {
   return samples.map(sample => {
-    const score          = quickScore(sample.text);
+    const score          = quickScore(sample.text, sample.content_type);
     const predictedLabel = scoreToLabel(score);
     const inRange        = score >= sample.expected_score_range[0] && score <= sample.expected_score_range[1];
     const correct        = predictedLabel === sample.final_consensus_label;
@@ -270,7 +270,7 @@ export function inspectSample(id: string) {
   const all = getSamplesBySplit('all');
   const sample = all.find(s => s.id === id);
   if (!sample) return null;
-  return { sample, extraction: extractEvidence(sample.text) };
+  return { sample, extraction: extractEvidence(sample.text, sample.content_type) };
 }
 
 // ─── Filtered evaluation (arbitrary filter combos) ───────────────────────────
@@ -346,12 +346,13 @@ export async function runOpenAIEvaluation(
     for (const sample of finalSamples) {
       try {
         const aiResult    = await analyzeWithAI(sample.text, sample.content_type);
-        const localScore  = quickScore(sample.text);
-        const openaiLabel = scoreToLabel(aiResult.manipulationScore) as ManipulationLabel;
+        const localScore  = quickScore(sample.text, sample.content_type);
+        const openaiScore = 'manipulationScore' in aiResult ? aiResult.manipulationScore : aiResult.manipulation_score;
+        const openaiLabel = scoreToLabel(openaiScore) as ManipulationLabel;
         const localLabel  = scoreToLabel(localScore) as ManipulationLabel;
         sampleResults.push({
           id: sample.id, humanLabel: sample.final_consensus_label as ManipulationLabel,
-          openaiLabel, openaiScore: aiResult.manipulationScore, localLabel, localScore,
+          openaiLabel, openaiScore, localLabel, localScore,
           correct: openaiLabel === sample.final_consensus_label, split: sample.split,
         });
       } catch { /* skip failed */ }

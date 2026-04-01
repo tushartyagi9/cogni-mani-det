@@ -8,15 +8,18 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const ANALYSIS_VERSION    = '2.0.0';
 export const RUBRIC_VERSION      = '1.0';
-export const MODEL_USED          = 'gpt-4o-mini';
+export const MODEL_USED          = 'llama-3.3-70b-versatile';
 
 // ─── Client (lazy-init) ───────────────────────────────────────────────────────
 let _client: OpenAI | null = null;
 
 function getClient(): OpenAI {
   if (!_client) {
-    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is not set.');
-    _client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set.');
+    _client = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
+    });
   }
   return _client;
 }
@@ -89,7 +92,33 @@ export const OpenAIResponseSchema = z.object({
   tacticEvidence:     z.array(TacticEvidenceSchema).max(11),
 });
 
-export type OpenAIAnalysisResult = z.infer<typeof OpenAIResponseSchema>;
+export const EmailOpenAIResponseSchema = z.object({
+  label: z.enum(['ham', 'newsletter', 'spam', 'phishing']),
+  manipulation_score: z.number().int().min(0).max(100),
+  risk_level: z.enum(['low', 'medium', 'high', 'critical']),
+  confidence: z.number().int().min(0).max(100),
+  dimension_scores: z.object({
+    sender_legitimacy: z.number().int().min(0).max(100),
+    urgency_pressure: z.number().int().min(0).max(100),
+    threat_fear: z.number().int().min(0).max(100),
+    credential_payment_request: z.number().int().min(0).max(100),
+    link_url_analysis: z.number().int().min(0).max(100),
+    social_engineering_tactics: z.number().int().min(0).max(100),
+  }),
+  manipulation_tactics: z.array(z.string()).max(20),
+  red_flags: z.array(z.string()).max(20),
+  legitimate_indicators: z.array(z.string()).max(20),
+  recommended_action: z.string().min(1),
+  explanation: z.string().min(1),
+});
+
+export type OpenAIStandardAnalysisResult = z.infer<typeof OpenAIResponseSchema>;
+export type OpenAIEmailAnalysisResult = z.infer<typeof EmailOpenAIResponseSchema>;
+export type OpenAIAnalysisResult = OpenAIStandardAnalysisResult | OpenAIEmailAnalysisResult;
+
+export function isEmailAnalysisResult(result: OpenAIAnalysisResult): result is OpenAIEmailAnalysisResult {
+  return 'manipulation_score' in result;
+}
 
 // ─── Prompts ──────────────────────────────────────────────────────────────────
 function buildSystemPrompt(): string {
@@ -179,6 +208,75 @@ RULES:
 • If text is neutral with no manipulation, return manipulationScore ≤ 20 and empty tacticEvidence`;
 }
 
+function buildEmailSystemPrompt(): string {
+  return `You are MindGuard's email security analyst. Analyze the provided email for manipulation, phishing, and deception tactics.
+
+CLASSIFICATION LABELS (choose exactly one):
+- "ham": Legitimate personal or work email. No manipulation. Score: 0-25.
+- "newsletter": Opted-in bulk email, newsletters, promotions from known brands. Legitimate but commercial. Score: 10-44.
+- "spam": Unsolicited commercial email. Unwanted but not necessarily dangerous. Score: 45-75.
+- "phishing": Malicious email designed to steal credentials, money, or personal data. Score: 76-100.
+
+SCORING RUBRIC - score each dimension 0-100, then compute weighted average:
+1. sender_legitimacy (20%): Is sender domain real? Lookalike domains score 70+. Free email for bank = 60+.
+2. urgency_pressure (18%): Artificial deadlines? "24 hours" = 70+. "1 hour" = 85+.
+3. threat_fear (20%): Threats of arrest/account closure/legal action? Arrest threat = 90+.
+4. credential_payment_request (22%): Asking OTP/password/card/bank details/advance fee? Full credentials = 85+.
+5. link_url_analysis (12%): Lookalike or suspicious URLs? Fake domain = 75+.
+6. social_engineering_tactics (8%): CEO fraud, govt impersonation, secrecy demand? Stacked tactics = 80+.
+
+INDIA-SPECIFIC HIGH-RISK PATTERNS (auto-score phishing 85+):
+- UPI PIN request via email (NPCI/PhonePe/GPay impersonation)
+- KYC update requests from SBI/HDFC/ICICI/Axis/RBI
+- Income Tax refund with bank detail request
+- Aadhaar/PAN linked to illegal activity + arrest threat
+- TRAI SIM block threat with officer phone number
+- CBI/ED/Cyber Crime Cell arrest threat
+- CoWIN/vaccination slot fee
+- Job offer with security deposit (TCS/Infosys/Wipro impersonation)
+- Shark Tank / SEBI investment with guaranteed returns
+- CEO wire transfer with secrecy demand (BEC)
+
+LEGITIMATE INDICATORS (reduce score):
+- Official domain matching claimed brand (sbi.co.in, irctc.co.in, zomato.com)
+- Specific transaction details (PNR, order number, invoice number)
+- Unsubscribe link present
+- "Do NOT share OTP with anyone" warning
+- No link clicks required
+
+Return ONLY valid JSON:
+{
+  "label": "ham|newsletter|spam|phishing",
+  "manipulation_score": <0-100>,
+  "risk_level": "low|medium|high|critical",
+  "confidence": <0-100>,
+  "dimension_scores": {
+    "sender_legitimacy": <0-100>,
+    "urgency_pressure": <0-100>,
+    "threat_fear": <0-100>,
+    "credential_payment_request": <0-100>,
+    "link_url_analysis": <0-100>,
+    "social_engineering_tactics": <0-100>
+  },
+  "manipulation_tactics": ["list", "of", "detected", "tactics"],
+  "red_flags": ["specific", "suspicious", "phrases", "found"],
+  "legitimate_indicators": ["trust", "signals", "found"],
+  "recommended_action": "string explaining what user should do",
+  "explanation": "2-3 sentence plain language explanation for the user"
+}`;
+}
+
+function buildEmailUserPrompt(text: string): string {
+  return `Analyze this email content.
+
+EMAIL (${text.length} characters):
+"""
+${text.substring(0, 8000)}
+"""
+
+Return ONLY valid JSON with the exact schema in the system instructions.`;
+}
+
 // ─── Compare prompt ───────────────────────────────────────────────────────────
 const CompareResponseSchema = z.object({
   scoreA:       z.number().int().min(0).max(100),
@@ -255,11 +353,12 @@ export async function analyzeWithAI(
   mode: string,
 ): Promise<OpenAIAnalysisResult> {
   return withRetry(async () => {
+    const isEmailMode = mode === 'email';
     const completion = await getClient().chat.completions.create({
       model:           MODEL_USED,
       messages: [
-        { role: 'system', content: buildSystemPrompt() },
-        { role: 'user',   content: buildUserPrompt(text, mode) },
+        { role: 'system', content: isEmailMode ? buildEmailSystemPrompt() : buildSystemPrompt() },
+        { role: 'user',   content: isEmailMode ? buildEmailUserPrompt(text) : buildUserPrompt(text, mode) },
       ],
       response_format: { type: 'json_object' },
       temperature:     0.1,
@@ -276,7 +375,9 @@ export async function analyzeWithAI(
       throw new Error('OpenAI returned invalid JSON.');
     }
 
-    const validated = OpenAIResponseSchema.safeParse(parsed);
+    const validated = isEmailMode
+      ? EmailOpenAIResponseSchema.safeParse(parsed)
+      : OpenAIResponseSchema.safeParse(parsed);
     if (!validated.success) {
       console.error('[OpenAI] Schema validation failed:', validated.error.flatten());
       throw new Error('OpenAI response did not match the expected schema. Please try again.');

@@ -10,10 +10,26 @@
       "weight": 14,
       "risk_level": "high",
       "example_phrases": [
-        "act now", "act immediately", "limited time", "last chance", "time is running out",
-        "expires today", "don't wait", "before it's too late", "right now", "deadline",
-        "this offer ends", "only hours left", "breaking news", "urgent", "immediately",
-        "hurry", "while supplies last", "don't miss", "ends soon", "final hours"
+        "act now",
+        "act immediately",
+        "limited time",
+        "last chance",
+        "time is running out",
+        "expires today",
+        "don't wait",
+        "before it's too late",
+        "right now",
+        "deadline",
+        "this offer ends",
+        "only hours left",
+        "breaking news",
+        "urgent",
+        "immediately",
+        "hurry",
+        "while supplies last",
+        "don't miss",
+        "ends soon",
+        "final hours"
       ]
     },
     {
@@ -23,10 +39,28 @@
       "weight": 13,
       "risk_level": "high",
       "example_phrases": [
-        "dangerous", "deadly", "life-threatening", "catastrophic", "crisis", "emergency",
-        "disaster", "terrifying", "alarming", "fatal", "kill", "destroying your",
-        "in danger", "threat to", "life at risk", "serious risk", "severe danger",
-        "toxic", "poisoning", "contaminated", "radiation", "lethal"
+        "dangerous",
+        "deadly",
+        "life-threatening",
+        "catastrophic",
+        "crisis",
+        "emergency",
+        "disaster",
+        "terrifying",
+        "alarming",
+        "fatal",
+        "kill",
+        "destroying your",
+        "in danger",
+        "threat to",
+        "life at risk",
+        "serious risk",
+        "severe danger",
+        "toxic",
+        "poisoning",
+        "contaminated",
+        "radiation",
+        "lethal"
       ]
     },
     {
@@ -36,11 +70,28 @@
       "weight": 13,
       "risk_level": "high",
       "example_phrases": [
-        "they don't want you to know", "mainstream media won't", "what they're hiding",
-        "suppressed", "cover up", "cover-up", "hidden truth", "secret agenda",
-        "what the government", "deep state", "elite", "globalist", "the establishment",
-        "censored", "banned", "silenced", "before it gets deleted", "before they remove",
-        "wake up", "sheeple", "red pill", "the truth they hide"
+        "they don't want you to know",
+        "mainstream media won't",
+        "what they're hiding",
+        "suppressed",
+        "cover up",
+        "cover-up",
+        "hidden truth",
+        "secret agenda",
+        "what the government",
+        "deep state",
+        "elite",
+        "globalist",
+        "the establishment",
+        "censored",
+        "banned",
+        "silenced",
+        "before it gets deleted",
+        "before they remove",
+        "wake up",
+        "sheeple",
+        "red pill",
+        "the truth they hide"
       ]
     },
     {
@@ -50,10 +101,24 @@
       "weight": 12,
       "risk_level": "high",
       "example_phrases": [
-        "shocking", "unbelievable", "jaw-dropping", "mind-blowing", "explosive",
-        "bombshell", "scandalous", "outrageous", "incredible", "stunning", "explosive revelation",
-        "you won't believe", "jaw dropping", "insane", "absolutely insane",
-        "this is HUGE", "this changes everything", "nobody is talking about"
+        "shocking",
+        "unbelievable",
+        "jaw-dropping",
+        "mind-blowing",
+        "explosive",
+        "bombshell",
+        "scandalous",
+        "outrageous",
+        "incredible",
+        "stunning",
+        "explosive revelation",
+        "you won't believe",
+        "jaw dropping",
+        "insane",
+        "absolutely insane",
+        "this is HUGE",
+        "this changes everything",
+        "nobody is talking about"
       ]
     },
     {
@@ -63,10 +128,25 @@
       "weight": 11,
       "risk_level": "high",
       "example_phrases": [
-        "heartbreaking", "devastating", "infuriating", "horrifying", "disgusting",
-        "outraged", "furious", "enraged", "sickening", "appalling", "shameful",
-        "how dare", "how could they", "cannot believe", "this is wrong",
-        "should be ashamed", "makes me sick", "breaks my heart", "tears in my eyes"
+        "heartbreaking",
+        "devastating",
+        "infuriating",
+        "horrifying",
+        "disgusting",
+        "outraged",
+        "furious",
+        "enraged",
+        "sickening",
+        "appalling",
+        "shameful",
+        "how dare",
+        "how could they",
+        "cannot believe",
+        "this is wrong",
+        "should be ashamed",
+        "makes me sick",
+        "breaks my heart",
+        "tears in my eyes"
       ]
     },
     {
@@ -76,11 +156,23 @@
       "weight": 11,
       "risk_level": "high",
       "example_phrases": [
-        "if you don't", "if you truly cared", "blood is on your hands", "how could you",
-        "you should be ashamed", "real people care", "only selfish people",
-        "you're part of the problem", "if you scroll past", "don't you care",
-        "your silence is", "complicit", "shame on you", "you owe it to",
-        "true believers", "real patriots", "real parents"
+        "if you don't",
+        "if you truly cared",
+        "blood is on your hands",
+        "how could you",
+        "you should be ashamed",
+        "real people care",
+        "only selfish people",
+        "you're part of the problem",
+        "if you scroll past",
+        "don't you care",
+        "your silence is",
+        "complicit",
+        "shame on you",
+        "you owe it to",
+        "true believers",
+        "real patriots",
+        "real parents"
       ]
     },
     {
@@ -90,10 +182,21 @@
       "weight": 10,
       "risk_level": "medium",
       "example_phrases": [
-        "experts say", "scientists claim", "studies show", "research proves",
-        "doctors confirm", "professionals agree", "sources say", "experts warn",
-        "leading researchers", "top scientists", "medical professionals agree",
-        "authorities confirm", "officials reveal", "insiders say", "according to sources"
+        "experts say",
+        "scientists claim",
+        "studies show",
+        "research proves",
+        "doctors confirm",
+        "professionals agree",
+        "sources say",
+        "experts warn",
+        "leading researchers",
+        "top scientists",
+        "medical professionals agree",
+        "authorities confirm",
+        "officials reveal",
+        "insiders say",
+        "according to sources"
       ]
     },
     {
@@ -103,11 +206,22 @@
       "weight": 10,
       "risk_level": "medium",
       "example_phrases": [
-        "everyone knows", "everyone is", "everybody", "join millions",
-        "thousands of people", "all your friends", "most people", "the whole world",
-        "nobody believes", "all experts agree", "everyone agrees",
-        "trending everywhere", "going viral", "the nation is outraged",
-        "people everywhere", "millions have already"
+        "everyone knows",
+        "everyone is",
+        "everybody",
+        "join millions",
+        "thousands of people",
+        "all your friends",
+        "most people",
+        "the whole world",
+        "nobody believes",
+        "all experts agree",
+        "everyone agrees",
+        "trending everywhere",
+        "going viral",
+        "the nation is outraged",
+        "people everywhere",
+        "millions have already"
       ]
     },
     {
@@ -117,11 +231,21 @@
       "weight": 9,
       "risk_level": "medium",
       "example_phrases": [
-        "share before it's deleted", "share everywhere", "spread the word",
-        "this needs to go viral", "retweet", "forward this", "tag everyone you know",
-        "subscribe now or", "donate immediately", "sign this now",
-        "must go viral", "share with everyone", "pass this on",
-        "send to everyone", "do not ignore this"
+        "share before it's deleted",
+        "share everywhere",
+        "spread the word",
+        "this needs to go viral",
+        "retweet",
+        "forward this",
+        "tag everyone you know",
+        "subscribe now or",
+        "donate immediately",
+        "sign this now",
+        "must go viral",
+        "share with everyone",
+        "pass this on",
+        "send to everyone",
+        "do not ignore this"
       ]
     },
     {
@@ -131,11 +255,27 @@
       "weight": 9,
       "risk_level": "medium",
       "example_phrases": [
-        "always", "never", "only way", "the only", "impossible", "100%",
-        "absolutely", "without question", "undeniably", "definitively",
-        "every single", "no exceptions", "guaranteed", "proven beyond doubt",
-        "irrefutable", "undeniable proof", "settled fact", "absolute truth",
-        "no doubt", "certainly", "without fail"
+        "always",
+        "never",
+        "only way",
+        "the only",
+        "impossible",
+        "100%",
+        "absolutely",
+        "without question",
+        "undeniably",
+        "definitively",
+        "every single",
+        "no exceptions",
+        "guaranteed",
+        "proven beyond doubt",
+        "irrefutable",
+        "undeniable proof",
+        "settled fact",
+        "absolute truth",
+        "no doubt",
+        "certainly",
+        "without fail"
       ]
     },
     {
@@ -145,12 +285,169 @@
       "weight": 8,
       "risk_level": "low",
       "example_phrases": [
-        "allegedly", "some say", "many believe", "it is said", "rumored",
-        "unconfirmed reports", "supposedly", "so-called", "some people think",
-        "we've heard", "word is", "reports suggest", "people are saying",
-        "insiders claim", "anonymous sources", "anonymous tips",
-        "it's being reported", "witnesses say"
+        "allegedly",
+        "some say",
+        "many believe",
+        "it is said",
+        "rumored",
+        "unconfirmed reports",
+        "supposedly",
+        "so-called",
+        "some people think",
+        "we've heard",
+        "word is",
+        "reports suggest",
+        "people are saying",
+        "insiders claim",
+        "anonymous sources",
+        "anonymous tips",
+        "it's being reported",
+        "witnesses say"
       ]
     }
-  ]
+  ],
+  "email": {
+    "dimensions": [
+      {
+        "id": "sender_legitimacy",
+        "name": "Sender & Domain Legitimacy",
+        "weight": 0.2,
+        "description": "Is the sender domain legitimate? Does it match the claimed organisation?",
+        "scoring_guide": {
+          "0-20": "Verified sender from known legitimate domain (e.g. onlinesbi.com, google.com)",
+          "21-40": "Plausible sender, minor domain mismatch or unknown sender",
+          "41-60": "Suspicious sender, generic domain (gmail for a bank claim), slight mismatch",
+          "61-80": "Lookalike domain detected (e.g. sbi-secure-verify.net, accounts-google-security.com)",
+          "81-100": "Clear impersonation — domain has no relation to claimed sender"
+        },
+        "red_flags": [
+          "Hyphenated brand names in domain (sbi-secure, paypal-verify)",
+          "Country TLD mismatch (.ru, .info, .net for banks)",
+          "Free email service for official communications (gmail, yahoo for banks)",
+          "Misspelled brand name in domain",
+          "Subdomain spoofing (paypal.attacker.com)"
+        ]
+      },
+      {
+        "id": "urgency_pressure",
+        "name": "Artificial Urgency & Time Pressure",
+        "weight": 0.18,
+        "description": "Does the email use artificial deadlines or urgency to pressure the reader?",
+        "scoring_guide": {
+          "0-20": "No time pressure; informational or casual tone",
+          "21-40": "Mild reminder with genuine deadline (trial expiry, appointment)",
+          "41-60": "Moderate urgency; some pressure but plausibly legitimate",
+          "61-80": "Strong artificial urgency; '24-hour' or 'today only' threats",
+          "81-100": "Extreme urgency designed to prevent rational thinking (1-hour deadline, immediate action)"
+        },
+        "red_flags": [
+          "Deadlines under 48 hours for serious account actions",
+          "All-caps urgency words (URGENT, IMMEDIATE, ACT NOW)",
+          "Countdown language without verifiable basis",
+          "Consequences escalate rapidly (suspension → permanent closure → arrest)"
+        ]
+      },
+      {
+        "id": "threat_fear",
+        "name": "Threats & Fear Induction",
+        "weight": 0.2,
+        "description": "Does the email use threats of financial loss, account closure, legal action, or arrest?",
+        "scoring_guide": {
+          "0-20": "No threats; neutral or positive framing",
+          "21-40": "Mild consequence mentioned (account revert to free tier, late fee)",
+          "41-60": "Moderate threat (account suspension, service interruption)",
+          "61-80": "Strong threat (account closure, funds held, data deletion)",
+          "81-100": "Extreme threat (arrest, legal action, CBI/police involvement)"
+        },
+        "red_flags": [
+          "Arrest or legal action threats",
+          "Fund freezing or permanent account closure",
+          "Threats that escalate if you contact others (secrecy demand)",
+          "Aadhaar/PAN/government ID linked to illegal activity claims"
+        ]
+      },
+      {
+        "id": "credential_payment_request",
+        "name": "Credential or Payment Request",
+        "weight": 0.22,
+        "description": "Does the email request passwords, OTPs, card details, bank details, or payments?",
+        "scoring_guide": {
+          "0-20": "No request for sensitive info or payment",
+          "21-40": "Requests non-sensitive info (name, address for delivery)",
+          "41-60": "Requests account verification via legitimate-looking portal",
+          "61-80": "Requests OTP, password, or partial card/bank details",
+          "81-100": "Requests full credentials, card numbers, bank account + IFSC, or upfront payment"
+        },
+        "red_flags": [
+          "Requesting OTP via email (legitimate services never do this)",
+          "KYC update via external link",
+          "Wire transfer request with secrecy demand (BEC pattern)",
+          "Advance fee payment to claim prize or refund",
+          "Full bank account + IFSC for 'refund processing'"
+        ]
+      },
+      {
+        "id": "link_url_analysis",
+        "name": "Link & URL Suspicious Indicators",
+        "weight": 0.12,
+        "description": "Are links in the email suspicious, shortened, or leading to non-official domains?",
+        "scoring_guide": {
+          "0-20": "Official domain links or no links",
+          "21-40": "Third-party links plausibly related (tracking, analytics)",
+          "41-60": "Shortened URLs (bit.ly) or links not matching sender's brand",
+          "61-80": "Lookalike domains or mismatched anchor text vs URL",
+          "81-100": "Clear phishing domains, IP-based links, or .ru/.info for financial services"
+        },
+        "red_flags": [
+          "Anchor text says 'Click here' but URL is external domain",
+          "Shortened URLs in financial or account security emails",
+          "HTTP (not HTTPS) links for login pages",
+          "IP address as URL",
+          "Mismatched TLD for claimed brand"
+        ]
+      },
+      {
+        "id": "social_engineering_tactics",
+        "name": "Social Engineering & Manipulation Tactics",
+        "weight": 0.08,
+        "description": "Does the email use authority, reciprocity, social proof, or other psychological manipulation?",
+        "scoring_guide": {
+          "0-20": "Straightforward communication; no manipulation",
+          "21-40": "Mild persuasion (discount offer, reminder)",
+          "41-60": "Moderate manipulation (authority appeal, fake social proof)",
+          "61-80": "Strong manipulation (impersonation of authority, conspiracy framing)",
+          "81-100": "Multiple stacked tactics: authority + urgency + fear + secrecy"
+        },
+        "red_flags": [
+          "CEO/boss impersonation with secrecy demand (BEC)",
+          "Government authority impersonation (CBI, IT Department, RBI)",
+          "Conspiracy framing ('what banks/doctors don't want you to know')",
+          "Fake testimonials or inflated social proof numbers",
+          "Secrecy/confidentiality demand to prevent victim from seeking help"
+        ]
+      }
+    ],
+    "overall_scoring": {
+      "formula": "weighted_average_of_all_dimensions",
+      "thresholds": {
+        "ham_safe": "0-25",
+        "low_risk": "26-40",
+        "medium_risk": "41-60",
+        "high_risk": "61-80",
+        "critical_phishing": "81-100"
+      }
+    },
+    "india_specific_patterns": {
+      "description": "High-priority patterns specific to Indian email threat landscape",
+      "patterns": [
+        "KYC update requests claiming to be from SBI, HDFC, ICICI, Axis",
+        "Income Tax Department refund claims",
+        "Aadhaar linked to illegal activity threats",
+        "CBI, ED, Cyber Crime Cell impersonation",
+        "TRAI/DoT SIM blocking threats",
+        "RBI account suspension notices",
+        "PAN card cancellation threats"
+      ]
+    }
+  }
 }
