@@ -1,4 +1,4 @@
-export type AnalysisMode = 'news' | 'email' | 'social' | 'ad';
+export type AnalysisMode = 'news' | 'email';
 export type InputMethod = 'text' | 'url' | 'upload';
 export type RiskLevel = 'high' | 'medium' | 'low' | 'critical';
 export type EmailCognitiveLabel =

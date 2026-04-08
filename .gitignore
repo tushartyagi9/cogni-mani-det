@@ -26,3 +26,17 @@ npm-debug.log*
 
 # Cursor / AI
 .cursor/
+
+# Datasets and Models
+3952415/
+3952415.zip
+models/
+prepared_manipulation_dataset/
+files/
+files (3)/
+jarvis-ai-main/
+*.pdf
+*.zip
+devall.err
+devall.log
+scripts/__pycache__/

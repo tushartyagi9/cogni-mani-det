@@ -14,8 +14,6 @@ import type { AnalysisMode, InputMethod, ArticlePreview } from '../../types';
 const EXAMPLE_TEXTS: Record<AnalysisMode, string> = {
   news:   'BREAKING: Experts reveal shocking truth about new policy that EVERYONE must know!',
   email:  'URGENT: Your account will be suspended in 24 hours unless you verify immediately!',
-  social: "This is the ONLY way to succeed! Join thousands who've already transformed their lives!",
-  ad:     "Limited time offer! Don't miss out on this revolutionary product that doctors don't want you to know about!",
 };
 
 const MIN_TEXT_LENGTH = 20;
@@ -206,8 +204,6 @@ export function AnalyzerPage() {
   const modes: Array<{ id: AnalysisMode; label: string; icon: typeof Newspaper }> = [
     { id: 'news',   label: 'News Article',  icon: Newspaper    },
     { id: 'email',  label: 'Email',          icon: Mail         },
-    { id: 'social', label: 'Social Post',    icon: MessageSquare },
-    { id: 'ad',     label: 'Advertisement',  icon: ShoppingBag  },
   ];
 
   return (
@@ -222,7 +218,7 @@ export function AnalyzerPage() {
             </h1>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
               Professional-grade detection of manipulative language patterns, emotional triggers,
-              and psychological tactics in news, emails, and social content.
+              and psychological tactics in news and emails.
             </p>
           </div>
 
@@ -290,7 +286,7 @@ export function AnalyzerPage() {
                 <textarea
                   value={text}
                   onChange={(e) => handleTextChange(e.target.value)}
-                  placeholder={`Paste ${mode === 'news' ? 'article' : mode === 'email' ? 'email content' : mode === 'social' ? 'social media post' : 'advertisement'} text here…`}
+                  placeholder={`Paste ${mode === 'news' ? 'article' : 'email content'} text here…`}
                   className={`w-full min-h-[280px] bg-input-background border rounded-lg p-4 
                            text-foreground placeholder:text-muted-foreground resize-y
                            focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
@@ -476,7 +472,7 @@ export function AnalyzerPage() {
                 ) : (
                   <>
                     <Zap className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                    Analyze {mode === 'news' ? 'Article' : mode === 'email' ? 'Email' : mode === 'social' ? 'Post' : 'Ad'}
+                    Analyze {mode === 'news' ? 'Article' : 'Email'}
                   </>
                 )}
               </button>
@@ -503,7 +499,7 @@ export function AnalyzerPage() {
                            bg-secondary/30 hover:bg-secondary/50 text-sm transition-all group"
                 >
                   <span className="text-xs text-primary uppercase tracking-wider block mb-1">
-                    {key === 'news' ? 'News' : key === 'email' ? 'Email' : key === 'social' ? 'Social' : 'Ad'}
+                    {key === 'news' ? 'News' : 'Email'}
                   </span>
                   <span className="text-foreground group-hover:text-primary transition-colors">
                     {example}

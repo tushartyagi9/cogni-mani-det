@@ -15,7 +15,7 @@ export const analyzeRouter = Router();
 // ─── Request schemas ──────────────────────────────────────────────────────────
 const AnalyzeRequestSchema = z.object({
   text:        z.string().trim().min(1, 'Please enter some text to analyse.').max(50_000),
-  mode:        z.enum(['news', 'email', 'social', 'ad']),
+  mode:        z.enum(['news', 'email']),
   inputMethod: z.enum(['text', 'url', 'upload']),
   inputUrl:    z.string().url().optional().or(z.literal('')),
 });
