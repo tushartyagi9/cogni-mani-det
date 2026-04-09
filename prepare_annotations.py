@@ -24,6 +24,8 @@ DATASET_FILES = [
 
 OUTPUT_DIR = Path("data")
 OUTPUT_CSV = OUTPUT_DIR / "annotations.csv"
+INPUT_V2_MAPPED_CSV = OUTPUT_DIR / "annotations_v2.csv"
+OUTPUT_V2_KAPPA_CSV = OUTPUT_DIR / "annotations_v2_kappa.csv"
 RANDOM_SEED = 42
 
 STANDARD_LABELS = [
@@ -187,8 +189,47 @@ def build_annotation_rows(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]
     return rows
 
 
-def write_csv(rows: List[Dict[str, Any]]) -> None:
-    """Write final annotation table to data/annotations.csv."""
+def build_annotation_rows_from_v2_csv(v2_csv_path: Path) -> List[Dict[str, Any]]:
+    """Build simulated annotator rows from mapped labels in annotations_v2.csv."""
+    if not v2_csv_path.exists():
+        raise FileNotFoundError(
+            f"Missing required mapped CSV: {v2_csv_path}. "
+            "Run fix_label_mapping.py first."
+        )
+
+    rng = random.Random(RANDOM_SEED)
+    rows: List[Dict[str, Any]] = []
+
+    with v2_csv_path.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for idx, rec in enumerate(reader):
+            sample_id = str(rec.get("sample_id", "")).strip() or f"v2_{idx}"
+            mapped_label = str(rec.get("mapped_label", "")).strip()
+            truth_label = mapped_label if mapped_label in STANDARD_LABELS else "Mild Influence"
+
+            annotator_1 = truth_label
+            annotator_2 = simulate_annotator(truth_label, 0.82, rng)
+            annotator_3 = simulate_annotator(truth_label, 0.76, rng)
+
+            rows.append(
+                {
+                    "sample_id": sample_id,
+                    "text": str(rec.get("text", "")),
+                    "domain": str(rec.get("domain", "")),
+                    "original_label": str(rec.get("original_label", "")),
+                    "annotator_1": annotator_1,
+                    "annotator_2": annotator_2,
+                    "annotator_3": annotator_3,
+                    "manipulation_score": rec.get("manipulation_score", ""),
+                    "risk_level": rec.get("risk_level", ""),
+                }
+            )
+
+    return rows
+
+
+def write_csv(rows: List[Dict[str, Any]], output_path: Path) -> None:
+    """Write final annotation table to a CSV path."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     fieldnames = [
@@ -203,14 +244,15 @@ def write_csv(rows: List[Dict[str, Any]]) -> None:
         "risk_level",
     ]
 
-    with OUTPUT_CSV.open("w", newline="", encoding="utf-8") as f:
+    with output_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
 
-def print_summary(rows: List[Dict[str, Any]]) -> None:
+def print_summary(rows: List[Dict[str, Any]], name: str, output_path: Path) -> None:
     """Print total samples, label distribution, and annotator agreement rates."""
+    print(f"\n=== {name} ===")
     total = len(rows)
     if total == 0:
         print("No rows generated.")
@@ -239,14 +281,22 @@ def print_summary(rows: List[Dict[str, Any]]) -> None:
     print(f"  annotator_1 vs annotator_3: {agree_13:.2%}")
     print(f"  annotator_2 vs annotator_3: {agree_23:.2%}")
     print(f"  unanimous (all three): {unanimous:.2%}")
-    print(f"\nSaved: {OUTPUT_CSV.resolve()}")
+    print(f"\nSaved: {output_path.resolve()}")
 
 
 def main() -> None:
     records = load_records()
     rows = build_annotation_rows(records)
-    write_csv(rows)
-    print_summary(rows)
+    write_csv(rows, OUTPUT_CSV)
+    print_summary(rows, "annotations.csv (original mapping)", OUTPUT_CSV)
+
+    v2_rows = build_annotation_rows_from_v2_csv(INPUT_V2_MAPPED_CSV)
+    write_csv(v2_rows, OUTPUT_V2_KAPPA_CSV)
+    print_summary(
+        v2_rows,
+        "annotations_v2_kappa.csv (mapped_label ground truth)",
+        OUTPUT_V2_KAPPA_CSV,
+    )
 
 
 if __name__ == "__main__":
