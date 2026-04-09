@@ -126,7 +126,7 @@ def compute_metrics(eval_pred):
 
 
 class WeightedTrainer(Trainer):
-    def __init__(self, class_weights: Optional[torch.Tensor] = None, *args, **kwargs):
+    def __init__(self, *args, class_weights: Optional[torch.Tensor] = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.class_weights = class_weights
 
@@ -145,6 +145,7 @@ class WeightedTrainer(Trainer):
 def main() -> None:
     args = parse_args()
     set_seed(args.seed)
+    Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
     data_files = {
