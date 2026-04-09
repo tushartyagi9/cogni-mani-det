@@ -7,21 +7,13 @@ import json
 import pickle
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import seaborn as sns
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    f1_score,
-    precision_recall_fscore_support,
-)
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
+
+from evaluation import compute_metrics, plot_confusion_matrix
 
 
 DATA_PATH = Path("data/annotations_v2.csv")
@@ -125,26 +117,6 @@ def build_pipeline() -> Pipeline:
     )
 
 
-def save_confusion_matrix_plot(cm_norm: np.ndarray, labels: list, out_path: Path) -> None:
-    plt.figure(figsize=(9, 7))
-    sns.heatmap(
-        cm_norm,
-        annot=True,
-        fmt=".2f",
-        cmap="Blues",
-        xticklabels=labels,
-        yticklabels=labels,
-        cbar=True,
-        square=True,
-    )
-    plt.title("Normalized Confusion Matrix (Test)")
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=300)
-    plt.close()
-
-
 def main() -> None:
     df = load_data(DATA_PATH)
     df_merged, merged_classes = merge_rare_classes(df, threshold=5)
@@ -156,53 +128,23 @@ def main() -> None:
 
     y_pred_test = model.predict(X_test)
 
-    precision, recall, f1, support = precision_recall_fscore_support(
-        y_test,
-        y_pred_test,
-        labels=CLASS_ORDER,
-        zero_division=0,
-    )
-    macro_f1 = f1_score(y_test, y_pred_test, average="macro", zero_division=0)
-    weighted_f1 = f1_score(y_test, y_pred_test, average="weighted", zero_division=0)
-    accuracy = accuracy_score(y_test, y_pred_test)
-
-    cm_norm = confusion_matrix(
-        y_test,
-        y_pred_test,
-        labels=CLASS_ORDER,
-        normalize="true",
-    )
-    cm_norm = np.nan_to_num(cm_norm, nan=0.0)
-
-    report_text = classification_report(
-        y_test,
-        y_pred_test,
-        labels=CLASS_ORDER,
-        zero_division=0,
-        digits=4,
-    )
-
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     model_path = OUTPUT_DIR / "model.pkl"
     metrics_path = OUTPUT_DIR / "metrics.json"
     cm_plot_path = OUTPUT_DIR / "confusion_matrix.png"
-    report_path = OUTPUT_DIR / "classification_report.txt"
+    report_prefix = "test"
 
     with model_path.open("wb") as f:
         pickle.dump(model, f)
 
-    per_class = []
-    for i, label in enumerate(CLASS_ORDER):
-        per_class.append(
-            {
-                "label": label,
-                "precision": float(precision[i]),
-                "recall": float(recall[i]),
-                "f1": float(f1[i]),
-                "support": int(support[i]),
-            }
-        )
+    computed = compute_metrics(
+        y_true=y_test,
+        y_pred=y_pred_test,
+        labels=CLASS_ORDER,
+        output_dir=OUTPUT_DIR,
+        prefix=report_prefix,
+    )
 
     metrics_payload = {
         "data_path": str(DATA_PATH),
@@ -212,16 +154,22 @@ def main() -> None:
             "val": int(len(X_val)),
             "test": int(len(X_test)),
         },
-        "accuracy": float(accuracy),
-        "macro_f1": float(macro_f1),
-        "weighted_f1": float(weighted_f1),
-        "per_class": per_class,
+        "accuracy": computed["accuracy"],
+        "macro_f1": computed["macro_f1"],
+        "weighted_f1": computed["weighted_f1"],
+        "cohen_kappa": computed["cohen_kappa"],
+        "per_class": computed["per_class"],
         "label_order": CLASS_ORDER,
-        "confusion_matrix_normalized": cm_norm.tolist(),
+        "classification_report_path": computed["classification_report_path"],
     }
     metrics_path.write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
-    report_path.write_text(report_text, encoding="utf-8")
-    save_confusion_matrix_plot(cm_norm, CLASS_ORDER, cm_plot_path)
+    plot_confusion_matrix(
+        y_true=y_test,
+        y_pred=y_pred_test,
+        labels=CLASS_ORDER,
+        output_path=cm_plot_path,
+        normalize=True,
+    )
 
     print("=== TF-IDF + SVM Baseline ===")
     print(f"Train: {len(X_train)} | Val: {len(X_val)} | Test: {len(X_test)}")
@@ -232,14 +180,14 @@ def main() -> None:
         )
     else:
         print("Merged into 'Mild Influence' due to <5 samples: None")
-    print(f"Macro-F1: {macro_f1:.2f}")
-    print(f"Weighted-F1: {weighted_f1:.2f}")
-    print(f"Accuracy: {accuracy:.2f}")
+    print(f"Macro-F1: {computed['macro_f1']:.2f}")
+    print(f"Weighted-F1: {computed['weighted_f1']:.2f}")
+    print(f"Accuracy: {computed['accuracy']:.2f}")
 
     print("Per-class F1:")
     print("Class                          | F1")
     print("------------------------------------")
-    for item in per_class:
+    for item in computed["per_class"]:
         print(f"{item['label']:<30} | {item['f1']:.2f}")
 
 
