@@ -51,17 +51,27 @@ LABELS = [
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Compute pairwise Cohen's and Fleiss' kappa.")
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "--csv",
         default=str(DEFAULT_CSV_PATH),
         help="Path to annotation CSV (default: data/annotations.csv).",
     )
+    parser.add_argument(
+        "--output-prefix",
+        default="",
+        help="Optional suffix for output files (e.g., 'v2' -> kappa_results_v2.json).",
+    )
     return parser.parse_args()
 
 
-def resolve_output_paths(csv_path: Path) -> tuple[Path, Path]:
+def resolve_output_paths(csv_path: Path, output_prefix: str = "") -> tuple[Path, Path]:
     """Resolve output artifact names while preserving existing default behavior."""
+    prefix = output_prefix.strip()
+    if prefix:
+        cleaned = prefix.lstrip("_")
+        return Path(f"kappa_results_{cleaned}.json"), Path(f"kappa_heatmap_{cleaned}.png")
+
     if csv_path.name.lower() == DEFAULT_CSV_PATH.name.lower():
         return DEFAULT_RESULTS_JSON_PATH, DEFAULT_HEATMAP_PATH
 
@@ -157,7 +167,7 @@ def save_heatmap(heatmap_df: pd.DataFrame, output_path: Path) -> None:
 def main() -> None:
     args = parse_args()
     csv_path = Path(args.csv)
-    results_json_path, heatmap_path = resolve_output_paths(csv_path)
+    results_json_path, heatmap_path = resolve_output_paths(csv_path, args.output_prefix)
 
     if not csv_path.exists():
         raise FileNotFoundError(
