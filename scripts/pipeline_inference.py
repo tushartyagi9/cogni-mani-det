@@ -127,8 +127,8 @@ class MindGuardPipeline:
 
 
 if __name__ == "__main__":
-    tier1_dir = "models/manipulation_distilbert"
-    tier2_dir = "models/7class_distilbert"
+    tier1_dir = "mindguard_models/distilbert_binary"
+    tier2_dir = "mindguard_models/distilbert_7class"
 
     try:
         pipeline = MindGuardPipeline(
