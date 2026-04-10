@@ -192,10 +192,20 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
             </div>
             <div className="h-2.5 overflow-hidden rounded-full border border-[#00E5CC]/25 bg-[#021019]">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-[#008f80] via-[#00E5CC] to-[#8afdf0] shadow-[0_0_18px_rgba(0,229,204,0.55)]"
+                className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-[#008f80] via-[#00E5CC] to-[#8afdf0] shadow-[0_0_18px_rgba(0,229,204,0.55)]"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
-              />
+              >
+                <motion.span
+                  className="pointer-events-none absolute inset-y-0 left-[-45%] w-[42%] bg-gradient-to-r from-transparent via-[#d7fff9]/85 to-transparent"
+                  animate={{ x: ['0%', '360%'] }}
+                  transition={{
+                    duration: busy ? 0.9 : 2.2,
+                    ease: 'linear',
+                    repeat: Number.POSITIVE_INFINITY,
+                  }}
+                />
+              </motion.div>
             </div>
           </div>
 
@@ -276,10 +286,11 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
               {FEATURE_PHASES.map((phase, index) => {
                 const Icon = phase.icon;
                 const active = featureStatus === 'ACTIVE';
+                const done = featureStatus === 'COMPLETE';
                 return (
                   <motion.div
                     key={phase.id}
-                    className="flex items-center justify-between rounded-lg border border-[#00E5CC]/20 bg-[#04101b]/70 px-3 py-2"
+                    className="relative overflow-hidden flex items-center justify-between rounded-lg border border-[#00E5CC]/20 bg-[#04101b]/70 px-3 py-2"
                     initial={{ opacity: 0.7, x: -8 }}
                     animate={{ opacity: active ? [0.6, 1, 0.6] : [0.72, 0.9, 0.72], x: 0 }}
                     transition={{
@@ -288,6 +299,16 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                       repeat: Number.POSITIVE_INFINITY,
                     }}
                   >
+                    <motion.span
+                      className="pointer-events-none absolute inset-y-0 left-[-45%] w-[42%] bg-gradient-to-r from-transparent via-[#00E5CC]/24 to-transparent"
+                      animate={active || done ? { x: ['0%', '360%'] } : { x: '-140%' }}
+                      transition={{
+                        duration: active ? 1.0 : 2.6,
+                        delay: index * 0.2,
+                        ease: 'linear',
+                        repeat: Number.POSITIVE_INFINITY,
+                      }}
+                    />
                     <div className="flex items-center gap-2.5">
                       <motion.div
                         animate={{ rotate: active ? [0, 6, -6, 0] : 0, scale: active ? [1, 1.1, 1] : [1, 1.03, 1] }}
@@ -303,6 +324,23 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                       <span className="text-sm text-[#d8f8f3]">{phase.label}</span>
                     </div>
                     <span className={`text-[11px] uppercase tracking-[0.14em] ${statusClass(featureStatus)}`}>{featureStatus}</span>
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#00E5CC]/10">
+                      <motion.span
+                        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#0b7569] via-[#00E5CC] to-[#b8fff7]"
+                        animate={
+                          active
+                            ? { width: ['24%', '82%', '36%'], x: ['0%', '14%', '0%'] }
+                            : done
+                              ? { width: '100%', x: '0%' }
+                              : { width: '18%', x: '0%' }
+                        }
+                        transition={{
+                          duration: active ? 1.1 : 0.4,
+                          ease: 'easeInOut',
+                          repeat: active ? Number.POSITIVE_INFINITY : 0,
+                        }}
+                      />
+                    </div>
                   </motion.div>
                 );
               })}
@@ -325,7 +363,7 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                 return (
                   <div key={tier.title} className="relative">
                     <motion.div
-                      className="rounded-xl border border-[#00E5CC]/25 bg-[#04101b]/80 px-3 py-3 shadow-[inset_0_0_20px_rgba(0,229,204,0.05)]"
+                      className="relative overflow-hidden rounded-xl border border-[#00E5CC]/25 bg-[#04101b]/80 px-3 py-3 shadow-[inset_0_0_20px_rgba(0,229,204,0.05)]"
                       animate={{
                         borderColor: isActive
                           ? ['rgba(0,229,204,0.25)', 'rgba(0,229,204,0.6)', 'rgba(0,229,204,0.25)']
@@ -340,6 +378,16 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                       }}
                       transition={{ duration: 1.2, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.22 }}
                     >
+                      <motion.span
+                        className="pointer-events-none absolute inset-y-0 left-[-42%] w-[40%] bg-gradient-to-r from-transparent via-[#00E5CC]/26 to-transparent"
+                        animate={isActive || tierStatus === 'COMPLETE' ? { x: ['0%', '360%'] } : { x: '-140%' }}
+                        transition={{
+                          duration: isActive ? 1.0 : 2.9,
+                          delay: idx * 0.2,
+                          ease: 'linear',
+                          repeat: Number.POSITIVE_INFINITY,
+                        }}
+                      />
                       <div className="flex items-start gap-3">
                         <motion.div
                           className="rounded-lg border border-[#00E5CC]/45 bg-[#00E5CC]/10 p-2"
@@ -362,6 +410,23 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                           <p className="text-sm text-[#dffef9]">{tier.subtitle}</p>
                           <p className="mt-1 text-xs text-[#7e9ea9]">{tier.detail}</p>
                         </div>
+                      </div>
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#00E5CC]/10">
+                        <motion.span
+                          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#0b7569] via-[#00E5CC] to-[#b8fff7]"
+                          animate={
+                            isActive
+                              ? { width: ['26%', '84%', '34%'], x: ['0%', '14%', '0%'] }
+                              : tierStatus === 'COMPLETE'
+                                ? { width: '100%', x: '0%' }
+                                : { width: '18%', x: '0%' }
+                          }
+                          transition={{
+                            duration: isActive ? 1.0 : 0.4,
+                            ease: 'easeInOut',
+                            repeat: isActive ? Number.POSITIVE_INFINITY : 0,
+                          }}
+                        />
                       </div>
                     </motion.div>
 
