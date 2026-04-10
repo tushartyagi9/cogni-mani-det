@@ -45,6 +45,16 @@ const STAGE_LABELS: Record<PipelineStage, string> = {
   finalizing: 'Finalizing Decision',
 };
 
+const STAGE_Y_POSITION: Record<PipelineStage, string> = {
+  idle: '6%',
+  ingestion: '26%',
+  feature: '45%',
+  tier1: '66%',
+  tier2: '79%',
+  tier3: '91%',
+  finalizing: '96%',
+};
+
 const FEATURE_PHASES = [
   { id: 'sentiment', label: 'Sentiment Analysis', icon: Scan },
   { id: 'semantic', label: 'Semantic Encoding', icon: Search },
@@ -91,6 +101,12 @@ function statusClass(status: string) {
   return 'text-[#6ea8b0]';
 }
 
+function panelClass(status: string) {
+  if (status === 'ACTIVE') return 'border-[#00E5CC]/45 shadow-[0_0_24px_rgba(0,229,204,0.18)]';
+  if (status === 'COMPLETE') return 'border-[#54d7c8]/35 shadow-[0_0_16px_rgba(84,215,200,0.12)]';
+  return 'border-[#00E5CC]/25';
+}
+
 export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: TechnicalPipelineExplorerProps) {
   const currentStage = busy ? stage : 'idle';
   const stageLabel = STAGE_LABELS[currentStage];
@@ -104,6 +120,16 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
   const tier1Status = getStatus(currentStage, busy, 'tier1');
   const tier2Status = getStatus(currentStage, busy, 'tier2');
   const tier3Status = getStatus(currentStage, busy, 'tier3');
+  const tierGroupStatus = tier3Status === 'ACTIVE'
+    ? 'ACTIVE'
+    : tier2Status === 'ACTIVE'
+      ? 'ACTIVE'
+      : tier1Status === 'ACTIVE'
+        ? 'ACTIVE'
+        : tier3Status === 'COMPLETE'
+          ? 'COMPLETE'
+          : 'QUEUED';
+  const scannerY = STAGE_Y_POSITION[currentStage];
 
   return (
     <div className="space-y-6">
@@ -122,6 +148,27 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
             repeat: Number.POSITIVE_INFINITY,
           }}
         />
+        <div className="pointer-events-none absolute bottom-8 right-3 top-24 z-0">
+          <div className="relative h-full w-[3px] overflow-hidden rounded-full bg-[#00E5CC]/16">
+            <motion.div
+              className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-transparent via-[#00E5CC]/80 to-transparent shadow-[0_0_20px_rgba(0,229,204,0.55)]"
+              animate={{ y: ['-10%', '105%'] }}
+              transition={{
+                duration: busy ? 2.2 : 4.8,
+                ease: 'linear',
+                repeat: Number.POSITIVE_INFINITY,
+              }}
+            />
+          </div>
+          <motion.span
+            className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-[#00E5CC] shadow-[0_0_18px_rgba(0,229,204,0.95)]"
+            animate={{ top: scannerY, scale: busy ? [1, 1.24, 1] : [1, 1.1, 1] }}
+            transition={{
+              top: { duration: 0.36, ease: 'easeOut' },
+              scale: { duration: busy ? 0.8 : 1.8, repeat: Number.POSITIVE_INFINITY },
+            }}
+          />
+        </div>
 
         <div className="relative space-y-6">
           <div className="flex items-start justify-between gap-3">
@@ -188,7 +235,7 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
             </svg>
           </div>
 
-          <div className="rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/70 p-4">
+          <div className={`rounded-xl border bg-[#07111d]/70 p-4 transition-all duration-300 ${panelClass(ingestionStatus)}`}>
             <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
               <span className="flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5 text-[#00E5CC]" />
@@ -217,7 +264,7 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/70 p-4">
+          <div className={`rounded-xl border bg-[#07111d]/70 p-4 transition-all duration-300 ${panelClass(featureStatus)}`}>
             <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
               <span className="flex items-center gap-2">
                 <Cpu className="h-3.5 w-3.5 text-[#00E5CC]" />
@@ -262,7 +309,7 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
             </div>
           </div>
 
-          <div className="relative rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/72 p-4">
+          <div className={`relative rounded-xl border bg-[#07111d]/72 p-4 transition-all duration-300 ${panelClass(tierGroupStatus)}`}>
             <div className="mb-3 text-xs uppercase tracking-[0.16em] text-[#85a4ad]">3-Tier Architecture</div>
             <div className="relative space-y-3">
               {TIERS.map((tier, idx) => {
@@ -279,8 +326,19 @@ export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: Tech
                   <div key={tier.title} className="relative">
                     <motion.div
                       className="rounded-xl border border-[#00E5CC]/25 bg-[#04101b]/80 px-3 py-3 shadow-[inset_0_0_20px_rgba(0,229,204,0.05)]"
-                      animate={{ borderColor: isActive ? ['rgba(0,229,204,0.25)', 'rgba(0,229,204,0.55)', 'rgba(0,229,204,0.25)'] : 'rgba(0,229,204,0.25)' }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.22 }}
+                      animate={{
+                        borderColor: isActive
+                          ? ['rgba(0,229,204,0.25)', 'rgba(0,229,204,0.6)', 'rgba(0,229,204,0.25)']
+                          : 'rgba(0,229,204,0.25)',
+                        boxShadow: isActive
+                          ? [
+                            'inset 0 0 20px rgba(0,229,204,0.06), 0 0 0 rgba(0,229,204,0)',
+                            'inset 0 0 24px rgba(0,229,204,0.14), 0 0 22px rgba(0,229,204,0.18)',
+                            'inset 0 0 20px rgba(0,229,204,0.06), 0 0 0 rgba(0,229,204,0)',
+                          ]
+                          : 'inset 0 0 20px rgba(0,229,204,0.05)',
+                      }}
+                      transition={{ duration: 1.2, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.22 }}
                     >
                       <div className="flex items-start gap-3">
                         <motion.div
