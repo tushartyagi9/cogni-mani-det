@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import {
   Activity,
   Bot,
+  CheckCircle2,
   Cpu,
   Network,
   Scan,
@@ -10,11 +11,39 @@ import {
   Sparkles,
 } from 'lucide-react';
 
+export type PipelineStage =
+  | 'idle'
+  | 'ingestion'
+  | 'feature'
+  | 'tier1'
+  | 'tier2'
+  | 'tier3'
+  | 'finalizing';
+
 type TechnicalPipelineExplorerProps = {
   busy?: boolean;
+  stage?: PipelineStage;
 };
 
 const INGESTION_PULSES = Array.from({ length: 18 }, (_, i) => i);
+const STAGE_SEQUENCE: PipelineStage[] = [
+  'ingestion',
+  'feature',
+  'tier1',
+  'tier2',
+  'tier3',
+  'finalizing',
+];
+
+const STAGE_LABELS: Record<PipelineStage, string> = {
+  idle: 'Standby',
+  ingestion: 'Neural Ingestion',
+  feature: 'Feature Extraction',
+  tier1: 'Tier 1 Binary Filter',
+  tier2: 'Tier 2 Multi-Class Typing',
+  tier3: 'Tier 3 LLM Validation',
+  finalizing: 'Finalizing Decision',
+};
 
 const FEATURE_PHASES = [
   { id: 'sentiment', label: 'Sentiment Analysis', icon: Scan },
@@ -43,7 +72,39 @@ const TIERS = [
   },
 ];
 
-export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExplorerProps) {
+function getStageIndex(stage: PipelineStage): number {
+  return STAGE_SEQUENCE.indexOf(stage);
+}
+
+function getStatus(currentStage: PipelineStage, busy: boolean, targetStage: PipelineStage) {
+  if (!busy) return 'STANDBY';
+  const current = getStageIndex(currentStage);
+  const target = getStageIndex(targetStage);
+  if (current < target) return 'QUEUED';
+  if (current === target) return 'ACTIVE';
+  return 'COMPLETE';
+}
+
+function statusClass(status: string) {
+  if (status === 'ACTIVE') return 'text-[#9efdf2]';
+  if (status === 'COMPLETE') return 'text-[#8ecbbf]';
+  return 'text-[#6ea8b0]';
+}
+
+export function TechnicalPipelineExplorer({ busy = false, stage = 'idle' }: TechnicalPipelineExplorerProps) {
+  const currentStage = busy ? stage : 'idle';
+  const stageLabel = STAGE_LABELS[currentStage];
+  const stageIndex = getStageIndex(currentStage);
+  const progress = busy
+    ? Math.max(8, ((Math.max(0, stageIndex) + 1) / STAGE_SEQUENCE.length) * 100)
+    : 0;
+
+  const ingestionStatus = getStatus(currentStage, busy, 'ingestion');
+  const featureStatus = getStatus(currentStage, busy, 'feature');
+  const tier1Status = getStatus(currentStage, busy, 'tier1');
+  const tier2Status = getStatus(currentStage, busy, 'tier2');
+  const tier3Status = getStatus(currentStage, busy, 'tier3');
+
   return (
     <div className="space-y-6">
       <motion.div
@@ -73,7 +134,21 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
               </p>
             </div>
             <div className="rounded-full border border-[#00E5CC]/40 bg-[#00E5CC]/10 px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-[#9efdf2]">
-              {busy ? 'Scanning' : 'Idle Monitor'}
+              {busy ? 'Pipeline Active' : 'Idle Monitor'}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/75 p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-xs uppercase tracking-[0.16em] text-[#85a4ad]">Live NLP Stage</span>
+              <span className="text-xs uppercase tracking-[0.14em] text-[#9efdf2]">{stageLabel}</span>
+            </div>
+            <div className="h-2.5 overflow-hidden rounded-full border border-[#00E5CC]/25 bg-[#021019]">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[#008f80] via-[#00E5CC] to-[#8afdf0] shadow-[0_0_18px_rgba(0,229,204,0.55)]"
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              />
             </div>
           </div>
 
@@ -114,9 +189,12 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
           </div>
 
           <div className="rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/70 p-4">
-            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
+            <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
+              <span className="flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5 text-[#00E5CC]" />
               Neural Ingestion
+              </span>
+              <span className={`text-[11px] tracking-[0.14em] ${statusClass(ingestionStatus)}`}>{ingestionStatus}</span>
             </div>
             <div className="relative h-16 overflow-hidden rounded-lg border border-[#00E5CC]/25 bg-[#030b15]">
               {INGESTION_PULSES.map((idx) => (
@@ -129,7 +207,7 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
                   }}
                   animate={{ y: ['-10%', '640%'], opacity: [0, 1, 0.1, 0] }}
                   transition={{
-                    duration: busy ? 1.5 : 2.8,
+                    duration: busy && ingestionStatus === 'ACTIVE' ? 1.1 : 2.8,
                     delay: idx * 0.08,
                     repeat: Number.POSITIVE_INFINITY,
                     ease: 'linear',
@@ -140,30 +218,34 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
           </div>
 
           <div className="rounded-xl border border-[#00E5CC]/25 bg-[#07111d]/70 p-4">
-            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
-              <Cpu className="h-3.5 w-3.5 text-[#00E5CC]" />
-              Feature Extraction Gate
+            <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.16em] text-[#85a4ad]">
+              <span className="flex items-center gap-2">
+                <Cpu className="h-3.5 w-3.5 text-[#00E5CC]" />
+                Feature Extraction Gate
+              </span>
+              <span className={`text-[11px] tracking-[0.14em] ${statusClass(featureStatus)}`}>{featureStatus}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
               {FEATURE_PHASES.map((phase, index) => {
                 const Icon = phase.icon;
+                const active = featureStatus === 'ACTIVE';
                 return (
                   <motion.div
                     key={phase.id}
                     className="flex items-center justify-between rounded-lg border border-[#00E5CC]/20 bg-[#04101b]/70 px-3 py-2"
                     initial={{ opacity: 0.7, x: -8 }}
-                    animate={{ opacity: busy ? [0.6, 1, 0.6] : [0.72, 0.92, 0.72], x: 0 }}
+                    animate={{ opacity: active ? [0.6, 1, 0.6] : [0.72, 0.9, 0.72], x: 0 }}
                     transition={{
-                      duration: busy ? 1.2 : 2.5,
+                      duration: active ? 1.1 : 2.5,
                       delay: index * 0.15,
                       repeat: Number.POSITIVE_INFINITY,
                     }}
                   >
                     <div className="flex items-center gap-2.5">
                       <motion.div
-                        animate={{ rotate: busy ? [0, 6, -6, 0] : 0, scale: busy ? [1, 1.1, 1] : [1, 1.03, 1] }}
+                        animate={{ rotate: active ? [0, 6, -6, 0] : 0, scale: active ? [1, 1.1, 1] : [1, 1.03, 1] }}
                         transition={{
-                          duration: busy ? 0.8 : 2.2,
+                          duration: active ? 0.8 : 2.2,
                           repeat: Number.POSITIVE_INFINITY,
                           delay: index * 0.12,
                         }}
@@ -173,7 +255,7 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
                       </motion.div>
                       <span className="text-sm text-[#d8f8f3]">{phase.label}</span>
                     </div>
-                    <span className="text-[11px] uppercase tracking-[0.14em] text-[#6ea8b0]">Active</span>
+                    <span className={`text-[11px] uppercase tracking-[0.14em] ${statusClass(featureStatus)}`}>{featureStatus}</span>
                   </motion.div>
                 );
               })}
@@ -186,23 +268,39 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
               {TIERS.map((tier, idx) => {
                 const TierIcon = tier.icon;
                 const isLast = idx === TIERS.length - 1;
+                const tierStage: PipelineStage = idx === 0 ? 'tier1' : idx === 1 ? 'tier2' : 'tier3';
+                const tierStatus = tierStage === 'tier1'
+                  ? tier1Status
+                  : tierStage === 'tier2'
+                    ? tier2Status
+                    : tier3Status;
+                const isActive = tierStatus === 'ACTIVE';
                 return (
                   <div key={tier.title} className="relative">
                     <motion.div
                       className="rounded-xl border border-[#00E5CC]/25 bg-[#04101b]/80 px-3 py-3 shadow-[inset_0_0_20px_rgba(0,229,204,0.05)]"
-                      animate={{ borderColor: busy ? ['rgba(0,229,204,0.25)', 'rgba(0,229,204,0.55)', 'rgba(0,229,204,0.25)'] : 'rgba(0,229,204,0.25)' }}
-                      transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.22 }}
+                      animate={{ borderColor: isActive ? ['rgba(0,229,204,0.25)', 'rgba(0,229,204,0.55)', 'rgba(0,229,204,0.25)'] : 'rgba(0,229,204,0.25)' }}
+                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.22 }}
                     >
                       <div className="flex items-start gap-3">
                         <motion.div
                           className="rounded-lg border border-[#00E5CC]/45 bg-[#00E5CC]/10 p-2"
-                          animate={{ scale: busy ? [1, 1.08, 1] : [1, 1.03, 1] }}
-                          transition={{ duration: busy ? 0.9 : 2.1, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.16 }}
+                          animate={{ scale: isActive ? [1, 1.08, 1] : [1, 1.03, 1] }}
+                          transition={{ duration: isActive ? 0.9 : 2.1, repeat: Number.POSITIVE_INFINITY, delay: idx * 0.16 }}
                         >
-                          <TierIcon className="h-4.5 w-4.5 text-[#00E5CC]" />
+                          {tierStatus === 'COMPLETE' ? (
+                            <CheckCircle2 className="h-4.5 w-4.5 text-[#8afdf0]" />
+                          ) : (
+                            <TierIcon className="h-4.5 w-4.5 text-[#00E5CC]" />
+                          )}
                         </motion.div>
                         <div>
-                          <p className="text-xs uppercase tracking-[0.16em] text-[#6ea8b0]">{tier.title}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs uppercase tracking-[0.16em] text-[#6ea8b0]">{tier.title}</p>
+                            <span className={`text-[10px] uppercase tracking-[0.14em] ${statusClass(tierStatus)}`}>
+                              {tierStatus}
+                            </span>
+                          </div>
                           <p className="text-sm text-[#dffef9]">{tier.subtitle}</p>
                           <p className="mt-1 text-xs text-[#7e9ea9]">{tier.detail}</p>
                         </div>
@@ -215,7 +313,7 @@ export function TechnicalPipelineExplorer({ busy = false }: TechnicalPipelineExp
                           className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[#00E5CC] shadow-[0_0_12px_rgba(0,229,204,0.85)]"
                           animate={{ y: [0, 20, 0], opacity: [0.2, 1, 0.2] }}
                           transition={{
-                            duration: busy ? 0.9 : 1.8,
+                            duration: isActive ? 0.9 : 1.8,
                             repeat: Number.POSITIVE_INFINITY,
                             delay: idx * 0.2,
                             ease: 'easeInOut',

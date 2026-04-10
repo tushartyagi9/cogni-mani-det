@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Sparkles, Zap, Link as LinkIcon, Upload, AlertTriangle,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { TechnicalPipelineExplorer } from './TechnicalPipelineExplorer';
+import type { PipelineStage } from './TechnicalPipelineExplorer';
 import { analyzeContent, fetchArticlePreview } from '../../services/analysisService';
 import { useAppContext } from '../../context/AppContext';
 import type { AnalysisMode, InputMethod, ArticlePreview } from '../../types';
@@ -18,6 +19,9 @@ const EXAMPLE_TEXTS: Record<AnalysisMode, string> = {
 
 const MIN_TEXT_LENGTH = 20;
 const MAX_TEXT_LENGTH = 50000;
+const PIPELINE_SEQUENCE: PipelineStage[] = ['ingestion', 'feature', 'tier1', 'tier2', 'tier3'];
+const MIN_ANIMATION_TIME_MS = 1800;
+const FINALIZATION_TIME_MS = 500;
 
 function isValidUrl(value: string): boolean {
   try {
@@ -44,6 +48,8 @@ export function AnalyzerPage() {
   const [urlError, setUrlError] = useState('');
   const [textError, setTextError] = useState('');
   const [analyzeError, setAnalyzeError] = useState('');
+  const [pipelineStage, setPipelineStage] = useState<PipelineStage>('idle');
+  const pipelineIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // -----------------------------------------------------------------------
   // Helpers
@@ -62,6 +68,23 @@ export function AnalyzerPage() {
     if (!value.trim()) return 'Please enter a URL.';
     if (!isValidUrl(value.trim())) return 'Please enter a valid URL (must start with http:// or https://).';
     return '';
+  };
+
+  const stopPipelineAnimation = () => {
+    if (pipelineIntervalRef.current) {
+      clearInterval(pipelineIntervalRef.current);
+      pipelineIntervalRef.current = null;
+    }
+  };
+
+  const startPipelineAnimation = () => {
+    stopPipelineAnimation();
+    let idx = 0;
+    setPipelineStage(PIPELINE_SEQUENCE[idx]);
+    pipelineIntervalRef.current = setInterval(() => {
+      idx = (idx + 1) % PIPELINE_SEQUENCE.length;
+      setPipelineStage(PIPELINE_SEQUENCE[idx]);
+    }, 430);
   };
 
   // -----------------------------------------------------------------------
@@ -165,6 +188,9 @@ export function AnalyzerPage() {
       : text;
 
     setIsAnalyzing(true);
+    startPipelineAnimation();
+    const analysisStart = Date.now();
+
     try {
       const result = await analyzeContent(
         contentToAnalyze,
@@ -172,6 +198,12 @@ export function AnalyzerPage() {
         inputMethod,
         inputMethod === 'url' ? url : undefined,
       );
+      const elapsed = Date.now() - analysisStart;
+      if (elapsed < MIN_ANIMATION_TIME_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_ANIMATION_TIME_MS - elapsed));
+      }
+      setPipelineStage('finalizing');
+      await new Promise((resolve) => setTimeout(resolve, FINALIZATION_TIME_MS));
       setCurrentResult(result);
       addToHistory(result);
       navigate('/results');
@@ -180,6 +212,8 @@ export function AnalyzerPage() {
       setAnalyzeError(msg);
       toast.error(msg);
     } finally {
+      stopPipelineAnimation();
+      setPipelineStage('idle');
       setIsAnalyzing(false);
     }
   };
@@ -205,6 +239,10 @@ export function AnalyzerPage() {
     { id: 'news',   label: 'News Article',  icon: Newspaper    },
     { id: 'email',  label: 'Email',          icon: Mail         },
   ];
+
+  useEffect(() => {
+    return () => stopPipelineAnimation();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -511,7 +549,7 @@ export function AnalyzerPage() {
         </div>
 
         {/* Technical Pipeline Explorer */}
-        <TechnicalPipelineExplorer busy={isAnalyzing} />
+        <TechnicalPipelineExplorer busy={isAnalyzing} stage={pipelineStage} />
       </div>
     </div>
   );
