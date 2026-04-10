@@ -6,7 +6,7 @@ import {
   Calendar, User, ExternalLink, AlertCircle, X, FileText,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { NewsIntelligenceSidebar } from './NewsIntelligenceSidebar';
+import { TechnicalPipelineExplorer } from './TechnicalPipelineExplorer';
 import { analyzeContent, fetchArticlePreview } from '../../services/analysisService';
 import { useAppContext } from '../../context/AppContext';
 import type { AnalysisMode, InputMethod, ArticlePreview } from '../../types';
@@ -510,8 +510,8 @@ export function AnalyzerPage() {
           </div>
         </div>
 
-        {/* News Intelligence Sidebar */}
-        <NewsIntelligenceSidebar />
+        {/* Technical Pipeline Explorer */}
+        <TechnicalPipelineExplorer busy={isAnalyzing} />
       </div>
     </div>
   );
