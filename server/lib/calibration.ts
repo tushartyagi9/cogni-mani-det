@@ -1,5 +1,5 @@
 /**
- * MindGuard Calibration Layer
+ * CogniGuard Calibration Layer
  *
  * Translates raw manipulation scores into calibrated labels and risk levels.
  * Thresholds are stored in calibrationConfig.json and can be updated

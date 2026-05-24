@@ -1,5 +1,5 @@
 /**
- * MindGuard Evidence Extractor
+ * CogniGuard Evidence Extractor
  *
  * Deterministic, rubric-based local scorer.
  * Used for:

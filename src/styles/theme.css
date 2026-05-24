@@ -1,7 +1,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* MindGuard Cyberpunk Theme */
+  /* CogniGuard Cyberpunk Theme */
   --font-size: 16px;
   --background: #050810;
   --foreground: #E8F3F1;

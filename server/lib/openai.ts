@@ -218,7 +218,7 @@ RULES:
 }
 
 function buildEmailSystemPrompt(): string {
-  return `You are MindGuard's email security analyst. Analyze the provided email for manipulation, phishing, and deception tactics.
+  return `You are CogniGuard's email security analyst. Analyze the provided email for manipulation, phishing, and deception tactics.
 
 CLASSIFICATION LABELS - COGNITIVE MANIPULATION TAXONOMY (choose exactly one):
 

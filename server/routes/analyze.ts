@@ -94,28 +94,28 @@ analyzeRouter.post(
         try {
           ai = await analyzeWithTransformer(text, mode);
           tierUsed = 'transformer';
-          console.log(`[MindGuard] tier_used=${tierUsed}`);
+          console.log(`[CogniGuard] tier_used=${tierUsed}`);
         } catch {
-          console.warn('[MindGuard] Tier 1 failed, trying Tier 2 (Groq LLM)...');
+          console.warn('[CogniGuard] Tier 1 failed, trying Tier 2 (Groq LLM)...');
           try {
             ai = await analyzeWithAI(text, mode);
             tierUsed = 'llm';
-            console.log(`[MindGuard] tier_used=${tierUsed}`);
+            console.log(`[CogniGuard] tier_used=${tierUsed}`);
           } catch {
-            console.warn('[MindGuard] Tier 2 failed, using Tier 3 (Rule-based)...');
+            console.warn('[CogniGuard] Tier 2 failed, using Tier 3 (Rule-based)...');
             tierUsed = 'rule_based';
-            console.log(`[MindGuard] tier_used=${tierUsed}`);
+            console.log(`[CogniGuard] tier_used=${tierUsed}`);
           }
         }
       } else {
         try {
           ai = await analyzeWithAI(text, mode);
           tierUsed = 'llm';
-          console.log(`[MindGuard] tier_used=${tierUsed}`);
+          console.log(`[CogniGuard] tier_used=${tierUsed}`);
         } catch {
-          console.warn('[MindGuard] LLM analysis failed, using rule-based fallback...');
+          console.warn('[CogniGuard] LLM analysis failed, using rule-based fallback...');
           tierUsed = 'rule_based';
-          console.log(`[MindGuard] tier_used=${tierUsed}`);
+          console.log(`[CogniGuard] tier_used=${tierUsed}`);
         }
       }
 

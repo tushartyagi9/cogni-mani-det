@@ -1,5 +1,5 @@
 // ─── Session ID (persisted in localStorage for anonymous history) ─────────────
-const SESSION_KEY = 'mindguard_session_id';
+const SESSION_KEY = 'cogniguard_session_id';
 
 function getSessionId(): string {
   let id = localStorage.getItem(SESSION_KEY);

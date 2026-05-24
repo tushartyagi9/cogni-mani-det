@@ -1,5 +1,5 @@
 /**
- * MindGuard Analysis Service
+ * CogniGuard Analysis Service
  * All analysis is performed by the Express backend (OpenAI + Firecrawl).
  * This module is a thin typed wrapper around the API endpoints.
  */

@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 const benchmarkPath = path.join('server', 'data', 'benchmarkDataset.json');
-const defaultDatasetPath = 'mindguard_email_PRODUCTION_v3.json';
-const filesDatasetPath = path.join('files', 'mindguard_email_PRODUCTION_v3_2.json');
+const defaultDatasetPath = 'cogniguard_email_PRODUCTION_v3.json';
+const filesDatasetPath = path.join('files', 'cogniguard_email_PRODUCTION_v3_2.json');
 const sourcePath = fs.existsSync(defaultDatasetPath) ? defaultDatasetPath : filesDatasetPath;
 
 if (!fs.existsSync(sourcePath)) {

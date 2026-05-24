@@ -1,4 +1,4 @@
-# MindGuard Results Summary
+# CogniGuard Results Summary
 
 ## Table 1 - Model Comparison
 

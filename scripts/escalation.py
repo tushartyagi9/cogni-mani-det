@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Escalation policy for MindGuard's 3-tier architecture.
+Escalation policy for CogniGuard's 3-tier architecture.
 """
 
 from dataclasses import dataclass
@@ -8,7 +8,7 @@ import json
 
 
 @dataclass
-class MindGuardEscalator:
+class CogniGuardEscalator:
     tier1_threshold: float = 0.70
     tier2_threshold: float = 0.60
     high_risk_categories: list = None
@@ -111,7 +111,7 @@ class MindGuardEscalator:
 
 
 if __name__ == "__main__":
-    escalator = MindGuardEscalator()
+    escalator = CogniGuardEscalator()
 
     examples = [
         {
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     decisions = escalator.batch_decide(examples)
 
-    print("=== MindGuard Escalation Smoke Test ===")
+    print("=== CogniGuard Escalation Smoke Test ===")
     header = (
         f"{'ID':<20} {'Final Label':<28} {'Escalate':<10} "
         f"{'Tier':<6} {'Risk':<10} Reason"

@@ -1,5 +1,5 @@
 /**
- * MindGuard Storage Service
+ * CogniGuard Storage Service
  *
  * Strategy:
  * - All mutations update localStorage FIRST (optimistic) for instant UI.
@@ -12,7 +12,7 @@
 import { apiClient } from '../lib/apiClient';
 import type { HistoryItem, AnalysisResult } from '../types';
 
-const LOCAL_KEY  = 'mindguard_history';
+const LOCAL_KEY  = 'cogniguard_history';
 const MAX_LOCAL  = 50;
 
 // ─── Local cache helpers ──────────────────────────────────────────────────────

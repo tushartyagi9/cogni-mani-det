@@ -48,7 +48,7 @@ export function Layout() {
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl neon-text">MindGuard</h1>
+                <h1 className="text-xl sm:text-2xl neon-text">CogniGuard</h1>
                 <p className="text-xs text-muted-foreground">Cognitive Manipulation Detector</p>
               </div>
             </Link>

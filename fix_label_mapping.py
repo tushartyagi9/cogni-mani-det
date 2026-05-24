@@ -16,8 +16,8 @@ from typing import Any, Dict, List
 
 
 INPUT_FILES = [
-    Path(r"C:\Users\ASAD AHMAD\OneDrive\Desktop\mindguard\files\mindguard_email_FINAL_v2.1_1.json"),
-    Path(r"C:\Users\ASAD AHMAD\OneDrive\Desktop\mindguard\files\mindguard_email_PRODUCTION_v3_2.json"),
+    Path(r"C:\Users\ASAD AHMAD\OneDrive\Desktop\cogniguard\files\cogniguard_email_FINAL_v2.1_1.json"),
+    Path(r"C:\Users\ASAD AHMAD\OneDrive\Desktop\cogniguard\files\cogniguard_email_PRODUCTION_v3_2.json"),
 ]
 
 OUTPUT_DIR = Path("data")

@@ -1,6 +1,6 @@
-# MindGuard Benchmark Workflow
+# CogniGuard Benchmark Workflow
 
-This document describes how to collect, label, import, and evaluate benchmark data for the MindGuard manipulation detection system.
+This document describes how to collect, label, import, and evaluate benchmark data for the CogniGuard manipulation detection system.
 
 ---
 

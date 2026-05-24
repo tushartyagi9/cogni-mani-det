@@ -17,9 +17,9 @@ from typing import Any, Dict, List
 
 
 DATASET_FILES = [
-    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\mindguard\files\email_benchmark_dataset.json",
-    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\mindguard\files\mindguard_email_FINAL_v2.1_1.json",
-    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\mindguard\files\mindguard_email_PRODUCTION_v3_2.json",
+    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\cogniguard\files\email_benchmark_dataset.json",
+    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\cogniguard\files\cogniguard_email_FINAL_v2.1_1.json",
+    r"C:\Users\ASAD AHMAD\OneDrive\Desktop\cogniguard\files\cogniguard_email_PRODUCTION_v3_2.json",
 ]
 
 OUTPUT_DIR = Path("data")

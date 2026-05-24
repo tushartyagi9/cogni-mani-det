@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MindGuard multi-tier inference pipeline.
+CogniGuard multi-tier inference pipeline.
 """
 
 import json
@@ -15,10 +15,10 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from escalation import MindGuardEscalator
+from escalation import CogniGuardEscalator
 
 
-class MindGuardPipeline:
+class CogniGuardPipeline:
     def __init__(
         self,
         tier1_model_dir: str,
@@ -51,7 +51,7 @@ class MindGuardPipeline:
         self.tier2_model.to(self.device)
         self.tier2_model.eval()
 
-        self.escalator = MindGuardEscalator(
+        self.escalator = CogniGuardEscalator(
             tier1_threshold=self.tier1_threshold,
             tier2_threshold=self.tier2_threshold,
         )
@@ -127,11 +127,11 @@ class MindGuardPipeline:
 
 
 if __name__ == "__main__":
-    tier1_dir = "mindguard_models/distilbert_binary"
-    tier2_dir = "mindguard_models/distilbert_7class"
+    tier1_dir = "cogniguard_models/distilbert_binary"
+    tier2_dir = "cogniguard_models/distilbert_7class"
 
     try:
-        pipeline = MindGuardPipeline(
+        pipeline = CogniGuardPipeline(
             tier1_model_dir=tier1_dir,
             tier2_model_dir=tier2_dir,
             tier1_threshold=0.70,
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     results = pipeline.predict_batch(sample_emails)
 
-    print("=== MindGuard Pipeline Smoke Test ===")
+    print("=== CogniGuard Pipeline Smoke Test ===")
     header = (
         f"{'Case':<6} {'Tier1':<8} {'T1Conf':<8} {'Tier2':<28} "
         f"{'T2Conf':<8} {'Final Label':<28} {'Escalate':<9} {'Risk':<9}"
