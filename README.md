@@ -48,17 +48,6 @@ AI-powered email manipulation and phishing detection system using **DistilBERT +
 
 ---
 
-## Model Performance
-
-| Metric | Score |
-|---|---|
-| Accuracy | 98.01% |
-| Precision | 98.43% |
-| Recall | 97.31% |
-| F1-Score | 97.87% |
-
----
-
 ## Installation
 
 ### Clone Repository
